@@ -1,0 +1,162 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'war'
+}
+
+group = 'com.naver'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+}
+
+dependencies {
+	//--------------------------------------------------------
+	// [유효성 체크 관련 API]를 다운로드 하는 설정하기
+	// implementation 는 A라는 모듈을 수정하게 되면, 이 모듈을 직접 의존하고 있는 B만 재빌드한다라는 의미이다.
+	//--------------------------------------------------------
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//--------------------------------------------------------
+	// [DB 연동을 위한 JDBC 관련 API]를 다운로드 하는 설정하기
+	//--------------------------------------------------------
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+	//--------------------------------------------------------
+	// [스프링부트 플렛폼 사용 관련 API]를 다운로드 하는 설정하기
+	//--------------------------------------------------------
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+
+	//--------------------------------------------------------
+	// [웹개발 관련 다수의 API] 를 다운로드 하는 spring-boot-starter-web 라는 의존성 조합을 설정하기
+	//--------------------------------------------------------
+			// 프로젝트에 설정해야하는 다수의 의존성들을 starter가 이미 포함하고 있기 때문에 
+			// starter에 대한 의존성 추가만으로도 다수의 API  를 수입할수 있다.
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	//--------------------------------------------------------
+	// [웹서버인 tomcat 관련 다수의 API] 를 다운로드 하는 spring-boot-starter-tomcat 라는 의존성 조합을 설정하기
+	//--------------------------------------------------------
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	
+	//--------------------------------------------------------
+	// [스프링부트 어플리케이션 테스트 관련 다수의 API] 를 다운로드 하는 
+	// spring-boot-starter-test 라는 의존성 조합을 설정하기
+	//--------------------------------------------------------
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	//--------------------------------------------------------
+	// [jstl 관련  API] 를 다운로드 하는 설정하기
+	//--------------------------------------------------------
+	implementation 'javax.servlet:jstl'
+	
+	//--------------------------------------------------------
+	// [웹서서인 톰캣에서 JSP 파일을 servlet으로 변환하는 기능의  API] 를 다운로드 하는 설정하기
+	// <참고>tomcat-embed-jasper는 JSP 파일을 servlet으로 변환하는 컴파일러이다.
+	//--------------------------------------------------------
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+		
+	//--------------------------------------------------------
+	// [DTO를 사용을 쉽게해주는 API] 를 다운로드 하는 설정하기.
+	// [bootstrap 관련 API] 를 다운로드 하는 설정하기.
+	//--------------------------------------------------------
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	//--------------------------------------------------------
+	// [개발자가 직접 다운로드한 API]가 있을 경우 이 API 의 위치 경로 설정하기.
+	// 스프링 부트가 자동으로 다운 로드 못받는 경우 직접 다운 받고 위치 경로를 아래 처럼한다.
+	// 아래 뜻은 폴더는 'libs'  이고, 다운 받은 API 파일의 확장자는 jar 이다라느 의미이다.
+	//--------------------------------------------------------
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	
+	//--------------------------------------------------------
+	// [로깅(=기록) 관련 API] 를 다운로드 하는 설정하기.
+	//--------------------------------------------------------
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
+
+
+	//--------------------------------------------------------
+	// [jquery 관련 API] 를 다운로드 하는 설정하기.
+	// [bootstrap 관련 API] 를 다운로드 하는 설정하기.
+	//--------------------------------------------------------
+	//compile 'org.webjars:jquery:3.5.1'
+	//compile 'org.webjars:bootstrap:4.5.2'
+	
+	//--------------------------------------------------------
+	// [시큐리티 로그인 관련 다수의 API]를 다운로드 하는 spring-boot-starter-security 라는 의존성 조합을 설정하기.
+	// [시큐리티 로그인 관련 태그 API]를 다운로드 하는 설정하기.
+	// <주의>수입 후 /시큐리티 로그인 관련 설정을 해야 정상적인 URL 접근이 가능하다 
+	//--------------------------------------------------------
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	//implementation 'org.springframework.security:spring-security-taglibs'
+	//testImplementation 'org.springframework.security:spring-security-test'
+
+	
+	//--------------------------------------------------------
+	// [소스 수정 시 자동으로 인지해 실행에 반영하는 등의 여러 기능을 가진 API 다운로드 하는 설정하기.
+	// <참고>  org.springframework.boot:spring-boot-devtools 는 
+	//        어플리케이션 개발시 유용한 기능들을 포함하고 있는 Spring Boot 모듈이다.
+	//--------------------------------------------------------
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+}
+
+test {
+	useJUnitPlatform()
+}
+
+//bootWar.enabled=false
+//war.enabled=true
+
+
+
+
+
+
+//--------------------------------------------------------
+// implementation
+//--------------------------------------------------------
+	//  의존 라이브러리 수정시 본 모듈까지만 재빌드
+	//  A(implementation) <- B <- C 일 때, C 에서 A 를 접근할 수 없음
+	//  A 수정시 B 까지 재빌드
+	//  A라는 모듈을 수정하게 되면, 이 모듈을 직접 의존하고 있는 B만 재빌드한다.
+//--------------------------------------------------------
+// Compile
+//--------------------------------------------------------
+	// A라는 모듈을 수정하게 되면, 이 모듈을 직접 혹은 간접 의존하고 있는 B와 C는 모두 재빌드한다.
+//--------------------------------------------------------
+// api
+//--------------------------------------------------------
+	// 수정 시 연관된 모든 모듈을 재빌드 한다. 종속된 하위 모듈 모두를 패키지에 포함한다
+//--------------------------------------------------------
+// compileOnly
+//--------------------------------------------------------
+	// Gradle이 컴파일 클래스 경로에만 종속성을 추가합니다(빌드 출력에 추가되지 않음). 
+//--------------------------------------------------------
+// runtimeOnly
+//--------------------------------------------------------
+	// Gradle이 런타임 시에 사용하도록 빌드 출력에만 종속성을 추가합니다. 
+//--------------------------------------------------------
+// annotationProcessor
+//--------------------------------------------------------
+	// 주석 프로세서인 라이브러리에 종속성을 추가하려면 반드시 annotationProcessor 구성을 사용하여 
+	// 주석 프로세서 클래스 경로에 추가해야 합니다. 그 이유는 이 구성을 사용하면 컴파일 클래스 경로를 
+	// 주석 프로세서 클래스 경로와 분리하여 빌드 성능을 향상할 수 있기 때문입니다. 
+
+
+
+
