@@ -16,7 +16,6 @@
 
 	<head>
 		<script src="/resources/jquery-1.11.0.min.js"></script>
-		<script src="common_func.js"></script>
 		<script>
 
 			// **********************************************************
@@ -100,7 +99,7 @@
 								//if(idCnt=="1"){
 								if(idCnt==1){
 									alert("로그인 성공")		
-									//location.replace("/boardList.do")
+									location.replace("/boardList.do")
 								}
 								//--------------------------------------------
 								//그렇지 않으면, 즉 아이디 암호가 존재하지 않으면
