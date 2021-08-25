@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -169,8 +168,6 @@ public class LoginController {
 		//mav.addObject("idCnt", 1); // new Integer(1) //기본형 데이터가 기본형 관리 객체로 형변환(Autoboxing)
 		mav.addObject("idCnt", login_idCnt); // DB연동 결과물 저장
 			//위 addObject 메소드로 저장된 DB연동 결과물은 HttpServletRequest 객체에 setAttribute 메소드 호출로도 저장된다.
-		return mav;
-		
-	}
-	
+		return mav;	
+	}	
 }

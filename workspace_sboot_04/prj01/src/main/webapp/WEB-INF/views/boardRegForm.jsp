@@ -17,6 +17,13 @@
 <head>
 	<script src="/resources/jquery-1.11.0.min.js"></script>
 	<script>
+		$(document).ready(function(){
+			$(".writer").val("사오정")
+			$(".subject").val("빨리 취업 하세요.")
+			$(".email").val("abc@naver.com")
+			$(".content").val("어쩌구 저쩌구")
+			$(".pwd").val("1234")
+		})
 		// **********************************************************
 		// [게시판 등록 화면]에 입력된 데이터의 유효성 체크를 자스로 하지 않고
 		// 비동기 방식으로 서버에 "/boardRegProc.do"로 접속하는 함수 선언
@@ -48,8 +55,44 @@
 				// 즉 응답 메시지 안의 html 소스가 문자열로써 익명함수의 매개변수로 들어온다.
 				// 응답 메시지 안의 html 소스는 boardRegProc.jsp의 실행 결과물이다.
 				//--------------------------------------------				
-				, success: function(responseHtml){
-					alert(responseHtml);
+				, success: function (responseHtml) {
+
+					//--------------------------------------------	
+					//매개변수로 들어온 html 소스에서 class=msg를 가진 태그가 끌어안고 있는 문자 꺼내기
+					//즉 에러 메시지 꺼내기 
+					// 꺼낸 존재 개수의 앞 뒤 공백 제거하기
+					//--------------------------------------------
+					var msg = $(responseHtml).filter(".msg").text();
+					msg = $.trim(msg);
+
+					if(msg!=null && msg.length>0){
+						alert(msg);
+						return;
+					}
+					
+					//--------------------------------------------	
+					//매개변수로 들어온 html 소스에서 class=boardRegCnt를 가진 태그가 끌어안고 있는 숫자 꺼내기
+					//즉 게시판 글 입력 성공 행의 개수 꺼내기
+					// 꺼낸 존재 개수의 앞 뒤 공백 제거하기
+					//--------------------------------------------
+						//alert(responseHtml);
+						var boardRegCnt = $(responseHtml).filter(".boardRegCnt").text();
+						boardRegCnt = $.trim(boardRegCnt);
+						boardRegCnt = parseInt(boardRegCnt,10);
+						//--------------------------------------------
+						//게시판 글 입력 성공 행의 개수가 1이면 즉 입력이 성공했으면
+						//--------------------------------------------
+						//if(boardRegCnt=="1"){
+						if(boardRegCnt==1){
+							alert("새글쓰기 성공")	
+							location.replace("/boardList.do")	
+						}
+						//--------------------------------------------
+						//그렇지 않으면, 즉 입력이 실패했으면
+						//--------------------------------------------
+						else{
+							alert("새글쓰기 실패")
+						}
 				}
 				//--------------------------------------------
 				// 서버의 응답을 못 받았을 경우 실행할 익명함수 설정
@@ -74,29 +117,29 @@
 			<caption><b>새글쓰기</b></caption>
 				<tr>
 					<th bgcolor="lightgray">이름</th>
-					<td><input type="text" name="writer" size="10" maxlength=10></td>
+					<td><input type="text" name="writer" class="writer" size="10" maxlength=10></td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray">제목</th>
-					<td><input type="text" name="subject" size=40 maxlength="30"></td>
+					<td><input type="text" name="subject" class="subject" size=40 maxlength="30"></td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray">이메일</th>
-					<td><input type="text" name="email" size=40 maxlength="30"></td>
+					<td><input type="text" name="email" class="email" size=40 maxlength="30"></td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray">내용</th>
-					<td><textarea name="content" cols=50 rows=20></textarea></td>
+					<td><textarea name="content" class="content" cols=50 rows=20></textarea></td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray">비밀번호</th>
-					<td><input type="password" name="pwd" size=10 maxlength="4"></td>
+					<td><input type="password" name="pwd" class="pwd" size=10 maxlength="4"></td>
 				</tr>
 			</table>
 			<div style="height:6px"></div>
 			<input type="button" value="저장" onClick="checkBoardRegForm();">
 			<input type="reset" value="다시작성">
-			<input type="button" value="목록보기" onclick="document.boardListForm.submit();">
+			<input type="button" value="목록보기" onclick="location.replace('/boardList.do')">
 			
 			<!-- <input type="hidden" name="b_no" value="" > -->
 		</form>

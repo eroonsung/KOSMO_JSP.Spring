@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm -->
+<!-- mapper 태그 선언 -->
+<!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm -->
+<mapper namespace="com.naver.erp.BoardDAO">
+	<!-- ******************************************************* -->
+	<!-- 게시판 글을 입력하는 insert 문을 내포한 insert 태그 선언 -->
+	<!-- ******************************************************* -->
+	<!-- parameterType : 안에 내장된 쿼리를 호출하면서 삽입되는 데이터의 자료형을 지정 -->
+	<!-- 입력, 수정, 삭제의 reslutType은 무조건 정수이기 때문에 생략 가능-->
+	<!-- insert 태그 안에는 resultType속성이 없다. 리턴값은 자동으로 int 형이다. -->
+	<!-- insert,update,delete태그도 동일함. -->
+	<insert id="insertBoard" parameterType="com.naver.erp.BoardDTO">
+		<!-- # : 키값으로 꺼낸 데이터가 String이면 ''을 붙이고 아니면 ''을 붙이지 않음 -->
+		insert into board(
+			 b_no
+			 , subject
+			 , writer
+			 , readcount
+			 , content
+			 , pwd
+			 , email
+			 , group_no
+			 , print_no
+			 , print_level
+		) values(
+			(select nvl(max(b_no),0)+1 from board)
+			 , #{subject} <!-- BoardDTO 객체의 subject 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{writer} <!-- BoardDTO 객S체의 writer 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , 0
+			 , #{content} <!-- BoardDTO 객체의 content 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{pwd} <!-- BoardDTO 객체의 pwd 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{email} <!-- BoardDTO 객체의 email 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , (select nvl(max(b_no),0)+1 from board)
+			 , 0
+			 , 0
+		)	
+	</insert>
+	
+	<!-- ******************************************************* -->
+	<!-- 게시판을 검색하는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getBoardList" resultType="java.util.HashMap">
+		<!-- resultType : 한 행을 담을 데이터만 작성하면 됨 -->
+		<!-- HashMap을 사용하면 그에 맞게 자료형을 바꿔줘야 함 -->
+		<!-- XxxDTO을 사용하면 자료형을 바꿀 필요 없음 -->
+		select
+			b_no||'' 						 "b_no"
+		    , subject                        "subject"
+		    , writer                         "writer"
+		    , readcount||''                  "readcount"
+		    , to_char(reg_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "reg_date"
+		    , print_level||''				 "print_level"
+	    from board
+        order by group_no desc, print_no asc
+	</select>
+</mapper>
