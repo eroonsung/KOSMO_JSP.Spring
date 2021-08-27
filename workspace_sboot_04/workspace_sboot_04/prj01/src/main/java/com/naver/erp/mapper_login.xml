@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.LoginDAO">
+						<!-- parameter로 "hashmap" 객체를 받아옴: 받을 데이터-->
+						<!-- select가 리턴되는 자료형은 "int"형: 내놓을 데이터-->
+	<select id="getLogin_idCnt" parameterType="hashmap" resultType="int">
+		select count(*) from login where login_id=#{login_id} and pwd=#{pwd}	
+		<!-- {login_id}, {pwd} : 해시맵 객체S의 key값 -->
+		<!-- # : 키값으로 꺼낸 데이터가 String이면 ''을 붙이고 아니면 ''을 붙이지 않음 -->
+	</select>
+</mapper>
