@@ -40,6 +40,7 @@
 				idCnt=parseInt(idCnt,10);
 				if(idCnt==1){
 					alert("로그인 성공");
+					location.replace("/boardList.do");
 					}
 				else{
 					alert("로그인 실패");
