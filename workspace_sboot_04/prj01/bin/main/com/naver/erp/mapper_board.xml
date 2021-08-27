@@ -5,6 +5,7 @@
 <!-- mapper 태그 선언 -->
 <!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm -->
 <mapper namespace="com.naver.erp.BoardDAO">
+	<!-- ============================================================================= -->
 	<!-- ******************************************************* -->
 	<!-- 게시판 글을 입력하는 insert 문을 내포한 insert 태그 선언 -->
 	<!-- ******************************************************* -->
@@ -38,7 +39,9 @@
 			 , 0
 		)	
 	</insert>
-	
+
+		
+	<!-- ============================================================================= -->	
 	<!-- ******************************************************* -->
 	<!-- 게시판을 검색하는 select문을 내포한 select 태그 선언 -->
 	<!-- ******************************************************* -->
@@ -56,4 +59,96 @@
 	    from board
         order by group_no desc, print_no asc
 	</select>
+		
+		
+	<!-- ============================================================================= -->
+	<!-- ******************************************************* -->
+	<!-- 조회수를 1 증가하는 update 문을 내포한 update 태그 선언 -->
+	<!-- ******************************************************* -->
+	<update id="updateReadcount" parameterType="int">
+		update board set readcount = readcount+1
+		where b_no = #{b_no}
+	</update>
+	
+	<!-- ******************************************************* -->
+	<!-- 게시판을 1개글을 검색하는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getBoard" parameterType="int" resultType="com.naver.erp.BoardDTO">
+		<!-- 알리아스가 속성변수명과 동일하기만 하면 select 결과물이 BoardDTO객체 안에 들어감 -->
+		<!-- 오라클의 자료형과 속성변수의 자료형이 일치해야 함 -->
+		select
+            b_no       		"b_no"
+            , subject       "subject"
+            , writer        "writer"
+            , reg_date		"reg_date" <!-- 날짜 자료형은 String형으로 가능 -->
+            , readcount     "readcount"
+            , content     	"content"
+            , pwd			"pwd"
+            , email         "email"
+            , group_no		"group_no"          
+            , print_no		"print_no"
+            , print_level   "print_level"           
+        from board      
+        where b_no=#{b_no} <!-- # : 자바에서 문자열이었으면 ""를 붙여줌 -->
+	</select>
+	
+	<!-- ============================================================================= -->
+	<!-- ******************************************************* -->
+	<!-- 삭제/수정할 게시판의 존재 개수를 검색하는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getBoardCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board where b_no=#{b_no}
+	</select>
+
+	<!-- ******************************************************* -->
+	<!-- 수정할 게시판의 비밀번호 존재 개수를 검색하는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getPwdCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board where b_no=#{b_no} and pwd=#{pwd}
+	</select>
+	
+	<!-- ******************************************************* -->
+	<!-- 게시판 수정하는 update 문을 내포한 update 태그 선언 -->
+	<!-- ******************************************************* -->
+	<update id="updateBoard" parameterType="com.naver.erp.BoardDTO" >
+		update board
+		set subject = #{subject}
+			,writer = #{writer}
+			,email = #{email}
+			,content = #{content}
+		where b_no=#{b_no}
+			and pwd=${pwd}
+	</update>
+	
+	<!-- ============================================================================= -->
+	<!-- ******************************************************* -->
+	<!-- 삭제할 게시판의 첫째 아들 글 존재 개수를 검색하는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getChildrenCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board
+		where 
+			group_no = (select group_no from board where b_no = #{b_no})
+			and print_no = (select print_no+1 from board where b_no = #{b_no})
+    		and print_level = (select print_level+1 from board where b_no = #{b_no})
+	</select>
+
+	<!-- ******************************************************* -->
+	<!-- 삭제할 게시판의 이후 글의 출력순서를 1씩 감소하는 update 문을 내포한 update 태그 선언 -->
+	<!-- ******************************************************* -->
+	<update id="downPrintNo" parameterType="com.naver.erp.BoardDTO" >
+		update board set print_no = print_no-1
+		where 
+			group_no = (select group_no from board where b_no = #{b_no})
+    		and print_no > (select print_no from board where b_no = #{b_no})
+	</update>
+
+	<!-- ******************************************************* -->
+	<!-- 게시판 삭제하는 delete 문을 내포한 delete 태그 선언 -->
+	<!-- ******************************************************* -->
+	<delete id="deleteBoard" parameterType="com.naver.erp.BoardDTO">
+		delete from board
+		where b_no=#{b_no}
+			and pwd=${pwd}
+	</delete>
+	
 </mapper>

@@ -19,15 +19,13 @@
 
 	<body>
 	
-	
-		<span class="boardRegCnt">
-			<%out.print( (int)request.getAttribute("boardRegCnt") );%>
+		<span class="boardUpDelCnt">
+			<%out.print( (int)request.getAttribute("boardUpDelCnt") );%>
 		</span>
-	
+
 		<span class="msg">
 			<%out.print( (String)request.getAttribute("msg") );%>
 		</span>
-	
 	
 	</body>
 

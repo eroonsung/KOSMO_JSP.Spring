@@ -142,6 +142,10 @@ public class BoardController {
 				// boardDTO, bindingResult의 메모리위치주소를 넣어줌
 			msg = check_BoardDTO(boardDTO, bindingResult);
 			
+			//----------------------------------------------------
+			//[ModelAndView 객체]에 유효성 체크 에러메시지 저장하기
+			//----------------------------------------------------
+			mav.addObject("msg", msg);
 			//만약 msg안에 ""가 저장되어 있으면, 즉 유효성 체크를 통과했으면 DB연동 진행
 			//if(msg.length()==0){
 			if( msg.equals("") ) {
@@ -156,18 +160,13 @@ public class BoardController {
 
 				//----------------------------------------------------
 				//[ModelAndView 객체]에 [게시판 입력 적용행의 개수] 저장하기
-				//[ModelAndView 객체]에 유효성 체크 에러메시지 저장하기
 				//----------------------------------------------------
 				mav.addObject("boardRegCnt", boardRegCnt);
-				mav.addObject("msg", msg);
-
-				System.out.println("BoardController.insertBoard 메소드 호출 성공"); 
-				
+				//System.out.println("BoardController.insertBoard 메소드 호출 성공"); 				
 			}
 			//만약 msg안에 ""가 저장되어 있지 않으면, 즉 유효성 체크를 통과 못했으면
 			else {
 				mav.addObject("boardRegCnt", 0);
-				mav.addObject("msg", msg);
 			}
 		}catch(Exception e){
 			//위 try 구문에서 에러가 발생하면
@@ -225,7 +224,7 @@ public class BoardController {
 		//----------------------------------------------------
 		// [BoardServiceImpl 객체]의 getBoard 메소드 호출로 [1개의 게시판글]을 BoardDTO 객체에 담아오기
 		//----------------------------------------------------
-		//BoardDTO board = this.boardService.getBoard(b_no);
+		BoardDTO boardDTO = this.boardService.getBoard(b_no);
 			//readcount가 증가하기 때문에 update구문이 있어 트랜잭션이 걸림
 		
 		//----------------------------------------------------
@@ -237,6 +236,129 @@ public class BoardController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardContentForm.jsp");
 		mav.addObject("b_no", b_no);
+		mav.addObject("boardDTO", boardDTO);
+		return mav;
+	}
+	
+	
+	//***********************************************
+	//가상 주소 /boardUpDelForm.do로 접근하면 호출되는 메소드 선언
+	//***********************************************
+	@RequestMapping(value="/boardUpdelForm.do")
+	public ModelAndView goBoardUpDelForm(
+			//----------------------------------------------------
+			//"b_no" 라는 파라미터명의 파라미터값이 저장되는 매개변수 b_no선언
+			// 수정 또는 삭제할 게시판 고유 번호가 들어오는매개변수 선언
+			//----------------------------------------------------
+			@RequestParam(value="b_no") int b_no 
+		) {
+		
+		//----------------------------------------------------
+		//boardDAOImpl 객체의 getBoard 메소드 호출로 1개의 게시판글을
+		//BoardDTO 객체에 담아서 가져오기
+		//----------------------------------------------------
+		//=>만약 서비스층을 거치게 만들거면 새로운 메소드를 만들어야 함
+			// 왜냐하면 서비스층의 getBoard 메소드는 조회수를 1 증가시키기 때문에
+		//BoardDTO boardDTO=this.boardService.getBoard_without_updateReadcount(b_no);
+		//=>만약 서비스층을 거치지 않게 만들거면 기존 getBoard 메소드를 사용할 수 있음
+		BoardDTO boardDTO = this.boardDAO.getBoard(b_no);
+		
+		//----------------------------------------------------
+		//[ModelAndView 객체] 생성하기
+		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
+		//[ModelAndView 객체]에 DB연동 결과물 담기 
+		//[ModelAndView 객체] 리턴하기
+		//----------------------------------------------------
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardUpDelForm.jsp");
+		mav.addObject("boardDTO",boardDTO);
+		return mav;
+	}
+	
+	//***********************************************
+	//가상 주소 /boardUpDelProc.do로 접근하면 호출되는 메소드 선언
+	//***********************************************
+	//@RequestMapping이 붙은 메소드의 매개변수에 DTO를 넣으면
+	//파라미터명과 BoardDTO의 속성변수명이 같기만 하면 알아서 속성변수안에 파라미터 값을 저장시킴
+	@RequestMapping(value="/boardUpDelProc.do")
+	public ModelAndView checkBoardUpDelForm(
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			// 파라미터값을 저장할 [BoardDTO 객체]를 매개변수로 선언
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			BoardDTO boardDTO
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			// "upDel"라는 파라미터명의 파라미터값이 저장된 매개변수 b_no 선언
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			, @RequestParam(value="upDel") String upDel
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			// Error 객체를 관리하는 BindingResult 객체가 저장되어 들어오는 매개변수 bindingResult 선언
+			// BindingResult 객체 => 유효성 검사
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			, BindingResult bindingResult
+		) {
+		//----------------------------------------------------
+		//[ModelAndView 객체] 생성하기
+		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
+		//----------------------------------------------------
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardUpDelProc.jsp");
+		
+		//----------------------------------------------------
+		//만약 게시판 수정 모드면 => 유효성 검사 필요
+		//수정 실행하고 수정 적용행의 개수 얻기
+		//----------------------------------------------------
+		if(upDel.equals("up")) {
+			//----------------------------------------------------
+			//check_BoardDTO 메소드를 호출하여 [유효성 체크]를 하고 경고문자 얻기
+			//유효성확인에 실패하면 DB연동을 할 수 없음
+			//----------------------------------------------------	
+			//유효성 체크 에러 메시지를 저장할 변수 msg 선언
+			String msg = "";
+			// check_BoardDTO 메소드를 호출하여 유효성 체크하고 에러메시지 문자 얻기
+				// boardDTO, bindingResult의 메모리위치주소를 넣어줌
+			msg = check_BoardDTO(boardDTO, bindingResult);
+			
+			//----------------------------------------------------
+			//[ModelAndView 객체]에 유효성 체크 에러메시지 저장하기
+			//----------------------------------------------------
+			mav.addObject("msg", msg);
+			
+			//만약 msg안에 ""가 저장되어 있으면, 즉 유효성 체크를 통과했으면
+			if(msg.equals("")) {
+				//수정 DB연동
+				//----------------------------------------------------
+				//[BoardServiceImpl 객체]의 updateBoard 메소드 호출로 
+				// 게시판 글 수정하고 [게시판 수정 적용행의 개수] 얻기
+				//----------------------------------------------------
+					// 결과가 1이면(한 행이 들어가면) 성공
+				//boardDTO에 파라미터값이 담겨있음
+				int boardUpDelCnt = this.boardService.updateBoard(boardDTO);
+				//System.out.println("boardUpdateCnt => "+ boardUpDelCnt); // DB연동 성공했는지 확인
+				//----------------------------------------------------
+				//[ModelAndView 객체]에 [게시판 수정 적용행의 개수] 저장하기
+				//----------------------------------------------------
+				mav.addObject("boardUpDelCnt", boardUpDelCnt);
+			}
+			//만약 msg 안에 ""가 저장되어 있지 않으면, 즉 유효성 체크를 통과하지 못했으면
+			else {
+				mav.addObject("boardUpDelCnt", 0);
+			}
+		}
+		//----------------------------------------------------
+		//만약 게시판 삭제 모드면 => 유효성검사 필요없음
+		//----------------------------------------------------
+		else if(upDel.equals("del")) {
+			//----------------------------------------------------
+			//[BoardServiceImpl 객체]의 deleteBoard 메소드 호출로
+			//삭제 실행하고 [삭제 적용행의 개수] 얻기
+			//----------------------------------------------------
+			int boardUpDelCnt = this.boardService.deleteBoard(boardDTO);
+			mav.addObject("boardUpDelCnt", boardUpDelCnt);
+		}
+		
+		//----------------------------------------------------
+		//[ModelAndView 객체] 리턴하기
+		//----------------------------------------------------
 		return mav;
 	}
 }

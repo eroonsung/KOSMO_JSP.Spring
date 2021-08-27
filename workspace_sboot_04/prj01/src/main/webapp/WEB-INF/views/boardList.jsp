@@ -32,7 +32,7 @@
 		// **********************************************************
 		function goBoardContentForm(b_no){
 			//-----------------------------------------
-			//name=boardContentForm 을 가진 form 태그 내부의 name=b_no를 가진 입력양식에
+			//name=boardContentForm 을 가진 form 태그 내부의 name=b_no를 가진 입력양식(hidden 태그)에
 			// 클릭한 행의 게시판 번호 저장하기
 			//-----------------------------------------
 			$("[name=boardContentForm] [name=b_no]").val(b_no);
@@ -88,10 +88,11 @@
 		</table>
 		<!-- ******************************************** -->
 		<!-- 게시판 상세보기 화면으로 이동하는 form 태그 선언하기 -->
+		<!-- 페이지 이동 -->
 		<!-- ******************************************** -->
 		<form name="boardContentForm" method="post" action="boardContentForm.do">
-			<input type="text" name="b_no">
-			<!-- <input type="hidden" name="b_no"> -->
+			<input type="hidden" name="b_no">
+			<!-- <input type="text" name="b_no"> -->
 			
 		</form>
 	</center>
