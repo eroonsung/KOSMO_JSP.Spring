@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.BoardDAO">
+	<!-- ======================================================================================= -->
+	<select id="getBoardList" resultType="java.util.HashMap">
+		select
+			b_no||'' 						 "b_no"
+		    , subject                        "subject"
+		    , writer                         "writer"
+		    , readcount||''                  "readcount"
+		    , to_char(reg_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "reg_date"
+		    , print_level||''				 "print_level"
+	    from board
+        order by group_no desc, print_no asc
+	</select>
+
+	<!-- ======================================================================================= -->
+	<insert id="insertBoard" parameterType="com.naver.erp.BoardDTO">
+		insert into board(
+			 b_no
+			 , subject
+			 , writer
+			 , readcount
+			 , content
+			 , pwd
+			 , email
+			 , group_no
+			 , print_no
+			 , print_level
+		) values(
+			(select nvl(max(b_no),0)+1 from board)
+			 , #{subject} 
+			 , #{writer} 
+			 , 0
+			 , #{content} 
+			 , #{pwd} 
+			 , #{email} 
+			 , (select nvl(max(b_no),0)+1 from board)
+			 , 0
+			 , 0
+		)	
+	</insert>
+	
+	<!-- ======================================================================================= -->
+	<update id="updateReadcount" parameterType="int">
+		update board set readcount=readcount+1
+		where b_no=#{b_no}
+	</update>
+	
+	<select id="getBoard"  parameterType="int" resultType="com.naver.erp.BoardDTO">
+		select
+            b_no       		"b_no"
+            , subject       "subject"
+            , writer        "writer"
+            , reg_date		"reg_date" <!-- 날짜 자료형은 String형으로 가능 -->
+            , readcount     "readcount"
+            , content     	"content"
+            , pwd			"pwd"
+            , email         "email"
+            , group_no		"group_no"          
+            , print_no		"print_no"
+            , print_level   "print_level"           
+        from board      
+        where b_no=#{b_no}
+	</select>
+	
+	<!-- ======================================================================================= -->
+	<select id="getBoardCnt"  parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board
+		where b_no=#{b_no}
+	</select>
+	
+	<select id="getPwdCnt"  parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board
+		where b_no=#{b_no} and pwd=#{pwd}		
+	</select>
+	
+	<update id="updateBoard" parameterType="com.naver.erp.BoardDTO">
+		update board 
+		set writer = #{writer}
+			, subject = #{subject}
+			, email = #{email}
+			, content = #{content}
+		where b_no=#{b_no} and pwd=#{pwd}
+	</update>
+	
+	<!-- ======================================================================================= -->
+	<select id="getChildrenCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board
+		where 
+			group_no = (select group_no from board where b_no = #{b_no})
+			and print_no = (select print_no+1 from board where b_no = #{b_no})
+    		and print_level = (select print_level+1 from board where b_no = #{b_no})
+	</select>
+	
+	<update id="downPrintNo" parameterType="com.naver.erp.BoardDTO" >
+		update board set print_no = print_no-1
+		where 
+			group_no = (select group_no from board where b_no = #{b_no})
+    		and print_no > (select print_no from board where b_no = #{b_no})
+	</update>
+	
+	<delete id="deleteBoard" parameterType="com.naver.erp.BoardDTO">
+		delete from board
+		where b_no=#{b_no}
+			and pwd=${pwd}
+	</delete>
+</mapper>
