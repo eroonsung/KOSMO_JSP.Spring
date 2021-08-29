@@ -92,7 +92,7 @@ public class BoardController {
 	//----------------------------------------------------------------------------
 	@RequestMapping(value="boardUpDelForm.do")
 	public ModelAndView goBoardUpDelForm(@RequestParam(value="b_no") int b_no) {
-		BoardDTO boardDTO = this.boardService.getBoard(b_no);
+		BoardDTO boardDTO = this.boardDAO.getBoard(b_no);
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardUpDelForm.jsp");
