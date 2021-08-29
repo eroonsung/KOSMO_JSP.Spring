@@ -9,7 +9,11 @@
 <title>Insert title here</title>
 <script src="/resources/jquery-1.11.0.min.js"></script>
 <script>
-
+	function goBoardRegForm(){}
+	function goBoardUpDelForm(){
+			document.boardUpDelForm.submit();
+		}
+	
 
 </script>
 </head>

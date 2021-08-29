@@ -75,6 +75,7 @@ public class BoardController {
 		}
 		return checkMsg;
 	}
+	
 	//----------------------------------------------------------------------------
 	@RequestMapping(value="boardContentForm.do")
 	public ModelAndView goBoardContentForm(@RequestParam(value="b_no") int b_no) {
@@ -85,6 +86,47 @@ public class BoardController {
 		mav.setViewName("boardContentForm.jsp");
 		mav.addObject("boardDTO",boardDTO);
 		mav.addObject("b_no",b_no);
+		return mav;
+	}
+	
+	//----------------------------------------------------------------------------
+	@RequestMapping(value="boardUpDelForm.do")
+	public ModelAndView goBoardUpDelForm(@RequestParam(value="b_no") int b_no) {
+		BoardDTO boardDTO = this.boardService.getBoard(b_no);
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardUpDelForm.jsp");
+		mav.addObject("boardDTO",boardDTO);
+		return mav;
+	}
+	
+	//----------------------------------------------------------------------------
+	@RequestMapping(value="boardUpDelProc.do")
+	public ModelAndView checkBoardUpDelForm(
+			BoardDTO boardDTO, @RequestParam(value="upDel") String upDel, BindingResult bindingResult
+		) {
+		System.out.println("checkBoardUpDelForm 호출시작");
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardUpDelProc.jsp");
+		
+		if(upDel.equals("up")) {
+			String msg = "";
+			msg = check_BoardDTO(boardDTO, bindingResult);
+			mav.addObject("msg", msg);
+			
+			if(msg.equals("")) {
+				int boardUpDelCnt = this.boardService.updateBoard(boardDTO);
+				mav.addObject("boardUpDelCnt", boardUpDelCnt);
+			}
+			else {
+				mav.addObject("boardUpDelCnt", 0);
+			}
+		}
+		else if(upDel.equals("del")) {
+			int boardUpDelCnt = this.boardService.deleteBoard(boardDTO);
+			mav.addObject("boardUpDelCnt", boardUpDelCnt);
+		}
 		return mav;
 	}
 }
