@@ -27,6 +27,20 @@ public class BoardServiceImpl implements BoardService {
 	//*************************************************
 	public int insertBoard(BoardDTO boardDTO) {
 		//-------------------------------------------------
+		//만약 엄마 글 번호(b_no)가 1 이상이면 댓글쓰기이므로
+		//엄마 글 이후의 게시판 글에 대해 출력순서번호를 1증가 시키기
+		//-------------------------------------------------
+		if(boardDTO.getB_no()>0) {
+			//-------------------------------------------------
+			//BoardDAOImpl 객체의 updatePrintNo 메소드를 호출하여 출력순서 번호를 1 증가시키고
+			//수정행에 적용 개수를 리턴받는다.
+			//게시판 글이 입력되는 부분 이후 글들은 출력 순서번호를 1씩 증가시켜야 한다.
+			// 이 값이 0이든 1이든 프로그램에 영향을 미치지 않음(있으면 업데이트 하고 없으면 하지마)
+			//-------------------------------------------------
+			int updatePrintNoCnt = this.boardDAO.updatePrintNo(boardDTO);
+		}
+		
+		//-------------------------------------------------
 		//BoardDAOImpl 객체의 insertBoard 메소드를 호출하여 게시판 글 입력 후 입력 적용 행의 개수 얻기
 		//-------------------------------------------------
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
@@ -51,6 +65,7 @@ public class BoardServiceImpl implements BoardService {
 		//-------------------------------------------------
 		int updateCnt= this.boardDAO.updateReadcount(b_no);
 		if(updateCnt==0) {return null;}
+		
 		//-------------------------------------------------
 		//[BoardDAOImpl 객체]의 getBoard 메소드를 호출하여 [1개 게시판 글]을 얻는다.
 		//-------------------------------------------------
@@ -84,7 +99,8 @@ public class BoardServiceImpl implements BoardService {
 		if(pwdCnt==0) {return -2;}
 		
 		//-------------------------------------------------
-		//[BoardDAOImpl 객체]의 updateBoard 메소드를 호출하여 게시판 글 수정 후 입력 수정 행의 개수 얻기
+		//[BoardDAOImpl 객체]의 updateBoard 메소드를 호출하여 
+		//게시판 글 수정 후 입력 수정 행의 개수 얻기
 		//-------------------------------------------------
 		int updateCnt = this.boardDAO.updateBoard(boardDTO);
 		//-------------------------------------------------
@@ -128,9 +144,9 @@ public class BoardServiceImpl implements BoardService {
 		//위에 조건문을 다 넘어 온 뒤 실행됨
 		//-------------------------------------------------
 		//[BoardDAOImpl 객체]의 downPrintNo 메소드를 호출하여
-		//삭제될 게시판 이후 글의 출력순서번호를 1씩 감소시킨 후 수정 적용 행의 게수를 얻는다.
+		//삭제될 게시판 이후 글의 출력순서번호를 1씩 감소시킨 후 수정 적용 행의 개수를 얻는다.
 		//-------------------------------------------------
-		//댓글이 없는 글을 삭제하게 된다면 같은 레벨의 내 밑에 있는 글들의 print_no를 업데이트 해야함
+		//댓글이 없는 글을 삭제하게 된다면 내 밑에 있는 글들의 print_no를 업데이트 해야함
 		// 이 값이 0이든 1이든 프로그램에 영향을 미치지 않음(있으면 업데이트 하고 없으면 하지마)
 		int downPrintNo = this.boardDAO.downPrintNo(boardDTO);
 		

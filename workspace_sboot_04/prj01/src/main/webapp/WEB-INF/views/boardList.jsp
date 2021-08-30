@@ -25,8 +25,10 @@
 		// [게시판 글쓰기 화면]으로 이동하는 함수 선언
 		// **********************************************************
 		function goBoardRegForm(){
+			// pk값이 필요 없기 때문에 location.replace()방법 사용
 			location.replace('/boardRegForm.do')
 		}
+		
 		// **********************************************************
 		// [게시판 상세보기 화면]으로 이동하는 함수 선언
 		// **********************************************************
@@ -42,58 +44,129 @@
 			//-----------------------------------------
 			document.boardContentForm.submit();
 		}
-		
+
+		// **********************************************************
+		// 키워드에 입력한 데이터를 가진 [게시판 목록]을 검색해서 그 결과를 보여주는 함수 선언
+		// **********************************************************
+		function search(){
+			
+			//-----------------------------------------
+			//입력한 키워드 얻어오기
+			//-----------------------------------------
+			var keyword1= $(".keyword1").val();
+			//-----------------------------------------
+			//만약 키워드가 비어있거나 공백으로 구성되어 있으면 경고하고 비우고 함수 중단하기
+			//-----------------------------------------
+			if(keyword1==null||keyword1.split(" ").join("")==""){
+				alert("키워드가 비어있어 검색하지 않습니다.");
+				$(".keyword1").val("");
+				$(".keyword1").focus();
+				return;
+			}
+			
+			//-----------------------------------------
+			//입력한 키워드의 앞 뒤 공백 제거하고 다시 넣어주기
+			//-----------------------------------------
+			$(".keyword1").val( $.trim(keyword1) );
+			
+			//-----------------------------------------
+			//비동기방식으로 웹서버에 접근해서 키워드를 만족하는
+			// 검색결과물을 응답받아 현 화면에 반영하기
+			//-----------------------------------------
+			searchExe();
+		}
+
+		// **********************************************************
+		// 
+		// **********************************************************
+		function searchAll(){
+			$(".keyword1").val("");
+			searchExe();
+		}
+
+		function searchExe(){
+			//-----------------------------------------
+			//현재 화면에서 페이지 이동 없이(=비동기방식으로)
+			//서버쪽 /boardList.do로 접속하여 키워드를 만족하는
+			// 검색결과물을 응답받아 현 화면에 반영하기
+			//-----------------------------------------
+			$.ajax({
+				url: "/boardList.do"
+				, type :"post"
+				, data: $("[name=boardListForm]").serialize()
+				, success: function(responseHtml){
+					var html = $(responseHtml).find(".searchResult").html();
+					$(".searchResult").html(html);
+				}
+				,error: function(){
+					alert("서버 접속 실패");
+				}
+			});
+		}
 	</script>
 
 </head>
 
 <body>
 	<center>
-		<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>
+	
+		<!-- ******************************************** -->
+		<!-- [게시판 검색 조건 입력 양식]을 내포한 form태그 선언
+		<!-- ******************************************** -->
+		<form name="boardListForm" method="post">
+			[키워드] : <input type="text" name="keyword1" class="keyword1">
+			
+			<input type="button" value=" 검색 " class="contactSearch" onClick="search();">&nbsp;
+			<input type="button" value="모두검색" class="contactSearchAll" onClick="searchAll();">&nbsp;
+			
+			<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>	
+		</form>
+		<div style="height:5px"></div>
 		
-		<table border=1>
-		<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
-		<%
-			List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
-			if(boardList!=null){
-				int totCnt = boardList.size();
-				for(int i=0; i<boardList.size(); i++){
+		<div class="searchResult">
+			<table border=1>
+			<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
+			<%
+				List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
+				if(boardList!=null){
+					int totCnt = boardList.size();
+					for(int i=0; i<boardList.size(); i++){
+						
+						Map<String,String> map = boardList.get(i); // 한 행의 해시맵
 					
-					Map<String,String> map = boardList.get(i); // 한 행의 해시맵
-				
-					// 컬럼명 또는 알리아스가 해시맵 객체의 키값으로 들어감
-					// 오라클 컬럼명 대문자가 원칙
-					String b_no = map.get("b_no");
-					
-					String subject = map.get("subject");
-					String writer = map.get("writer");
-					String readcount = map.get("readcount");
-					String reg_date = map.get("reg_date");
-					
-					String print_level = map.get("print_level");
-					int print_level_int = Integer.parseInt(print_level,10);
-					
-					String xxx = "";
-					for(int j=0; j<print_level_int; j++){
-						xxx = xxx+"&nbsp&nbsp&nbsp&nbsp";
-					}
-					if(print_level_int>0){xxx =xxx+"ㄴ";}
-					
-					out.println("<tr style='cursor:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"+(totCnt--)+"<td>"+xxx+subject
-							+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
-				}	
-			}
-		%>
+						// 컬럼명 또는 알리아스가 해시맵 객체의 키값으로 들어감
+						// 오라클 컬럼명 대문자가 원칙
+						String b_no = map.get("b_no");
+						
+						String subject = map.get("subject");
+						String writer = map.get("writer");
+						String readcount = map.get("readcount");
+						String reg_date = map.get("reg_date");
+						
+						String print_level = map.get("print_level");
+						int print_level_int = Integer.parseInt(print_level,10);
+						
+						String xxx = "";
+						for(int j=0; j<print_level_int; j++){
+							xxx = xxx+"&nbsp&nbsp&nbsp&nbsp";
+						}
+						if(print_level_int>0){xxx =xxx+"ㄴ";}
+						
+						out.println("<tr style='cursor:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"+(totCnt--)+"<td>"+xxx+subject
+								+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
+					}	
+				}
+			%>
+			</table>
+		</div>
 		
-		</table>
 		<!-- ******************************************** -->
 		<!-- 게시판 상세보기 화면으로 이동하는 form 태그 선언하기 -->
 		<!-- 페이지 이동 -->
 		<!-- ******************************************** -->
 		<form name="boardContentForm" method="post" action="boardContentForm.do">
 			<input type="hidden" name="b_no">
-			<!-- <input type="text" name="b_no"> -->
-			
+			<!-- <input type="text" name="b_no"> -->	
 		</form>
 	</center>
 </body>

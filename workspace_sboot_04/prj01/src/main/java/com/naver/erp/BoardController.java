@@ -41,6 +41,7 @@ public class BoardController {
 	@Autowired
 	private BoardDAO boardDAO;
 	
+	/*
 	//***********************************************
 	//가상 주소 /boardList.do로 접근하면 호출되는 메소드 선언
 	//	@RequestMapping 내부에 method="RequestMethod.POST"가 없으므로
@@ -67,13 +68,49 @@ public class BoardController {
 		mav.addObject("boardList", boardList);
 		return mav;
 	}
-		
+	*/
+	//***********************************************
+	//가상 주소 /boardList.do로 접근하면 호출되는 메소드 선언
+	//	@RequestMapping 내부에 method="RequestMethod.POST"가 없으므로
+	//	가상주소 /boardList.do로 접근 시 get 또는 post방식 접근 모두 허용한다.
+	//***********************************************
+	@RequestMapping(value="/boardList.do")
+	public ModelAndView getBoardList(
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			// 파라미터값을 저장하고 있는 BoardSearchDTO객체를 받아오는 매개변수 선언
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			BoardSearchDTO boardSearchDTO
+		) {
+		System.out.println("BoardController.getBoardList 메소드 호출 시작");
+		//----------------------------------------------------
+		//오라클 board테이블 안의 데이터(n행m열)를 검색해서 자바 객체에 저장하기	
+		// 즉, [게시판 목록] 얻기
+		// 트랜잭션이 걸리지 않기 때문에 @Service, @Transactional 클래스 만들지 않아도 됨
+		//----------------------------------------------------
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
 	
+		//----------------------------------------------------
+		//[ModelAndView 객체] 생성하기
+		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
+		//[ModelAndView 객체]에 [게시판 목록 검색 결과] 저장하기
+		//[ModelAndView 객체] 리턴하기
+		//----------------------------------------------------
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardList.jsp");
+		mav.addObject("boardList", boardList);
+		System.out.println("BoardController.getBoardList 메소드 호출 완료");
+		return mav;
+	}
+	
+	
+	/*
 	//***********************************************
 	//가상 주소 /boardRegForm.do로 접근하면 호출되는 메소드 선언
+	// 새글쓰기 
 	//***********************************************
 	@RequestMapping(value="/boardRegForm.do")
 	public ModelAndView goBoardRegForm() {
+		
 		//----------------------------------------------------
 		//[ModelAndView 객체] 생성하기
 		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
@@ -83,6 +120,50 @@ public class BoardController {
 		mav.setViewName("boardRegForm.jsp");
 		return mav;
 	}
+	*/
+	//***********************************************
+	//가상 주소 /boardRegForm.do로 접근하면 호출되는 메소드 선언
+	// 새글쓰기 + 댓글쓰기
+	//***********************************************
+	@RequestMapping(value="/boardRegForm.do")
+	public ModelAndView goBoardRegForm(
+			//@RequestParam(value="b_no") int b_no 
+				//=> 반드시 b_no라는 파라미터명이 있어야 함
+				// 새글쓰기에는 b_no값이 없기 때문에 에러 발생
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			// 파라미터명이 b_no인 파라미터값을 받아오는 매개변수 b_no 선언하기
+			//+++++++++++++++++++++++++++++++++++++++++++++++++
+			//방법 1
+			//HttpServletRequest request
+				//=> 조건문 사용해서 사용 가능
+			//방법 2
+			@RequestParam(
+					value="b_no" // 파라미터명 설정
+					, required=false // 파라미터명, 값이 안들어와도 용서함
+					, defaultValue="0" // 파라미터값이 없으면 파라미터값을 0으로 함
+				) int b_no 
+				// required=false : 필수 입력 조건을 풀어줌
+				// defaultValue="0" : 파라미터 값이 안들어왔을 때 null값이 들어오는 것을 방지
+		) { 
+		
+		/* HttpServletRequest request를 매개변수로 받았을 때
+		 	String b_no = request.getParameter("b_no");
+		 	if(b_no==null){
+		 		// 새글쓰기 코딩
+		 	}else if{
+		 		//댓글쓰기 코딩
+		 	}
+		 */
+		//----------------------------------------------------
+		//[ModelAndView 객체] 생성하기
+		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
+		//[ModelAndView 객체] 리턴하기
+		//----------------------------------------------------
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardRegForm.jsp");
+		return mav;
+	}
+	
 	
 	//=====파라미터값을 꺼내는 방법 3=====
 	//***********************************************
@@ -94,7 +175,7 @@ public class BoardController {
 	@RequestMapping(value="/boardRegProc.do")
 	public ModelAndView insertBoard( 
 		//+++++++++++++++++++++++++++++++++++++++++++++++++
-		// 파라미터값을 저장할 [BoardDTO 객체를 매개변수로 선언
+		// 파라미터값을 저장할 [BoardDTO 객체]를 매개변수로 선언
 		//+++++++++++++++++++++++++++++++++++++++++++++++++
 			// [파라미터명]과 [BoradDTO 객체]의 [속성변수명]이 같으면
 			// setter 메소드가 작동되어 [파라미터값]이 [속성변수]에 저장된다.
@@ -121,6 +202,8 @@ public class BoardController {
 		mav.setViewName("boardRegProc.jsp");
 		//예외 처리
 		try { 
+			
+			
 			/*
 			System.out.println(boardDTO.getB_no());
 			System.out.println(boardDTO.getWriter());
@@ -156,8 +239,8 @@ public class BoardController {
 					// 결과가 1이면(한 행이 들어가면) 성공
 				//boardDTO에 파라미터값이 담겨있음
 				int boardRegCnt = this.boardService.insertBoard(boardDTO);
-				System.out.println("boardRegCnt => "+ boardRegCnt); // DB연동 성공했는지 확인
-
+				//System.out.println("boardRegCnt => "+ boardRegCnt); // DB연동 성공했는지 확인
+				
 				//----------------------------------------------------
 				//[ModelAndView 객체]에 [게시판 입력 적용행의 개수] 저장하기
 				//----------------------------------------------------
@@ -287,7 +370,7 @@ public class BoardController {
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
 			BoardDTO boardDTO
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
-			// "upDel"라는 파라미터명의 파라미터값이 저장된 매개변수 b_no 선언
+			// "upDel"라는 파라미터명의 파라미터값이 저장된 매개변수 upDel 선언
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
 			, @RequestParam(value="upDel") String upDel
 			//+++++++++++++++++++++++++++++++++++++++++++++++++

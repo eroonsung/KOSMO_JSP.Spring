@@ -51,10 +51,26 @@ public class BoardDAOImpl implements BoardDAO {
 		return boardRegCnt;
 	}
 	
+	//***********************************************
+	//[1개 게시판 글 출력번호 1 증가하고 수정 행의 개수]리턴하는 메소드 선언
+	//***********************************************
+	public int updatePrintNo(BoardDTO boardDTO) {
+		//------------------------------------------------------
+		//SqlSessionTemplate 객체의 updqte 메소드 호출로
+		// 게시판 글 출력번호 1 증가하고 수정 행의 개수 얻기
+		//------------------------------------------------------
+		int updatePrintNoCnt = this.sqlSession.update(
+				"com.naver.erp.BoardDAO.updatePrintNo"
+				, boardDTO
+				);
+		return updatePrintNoCnt;
+	}
+	
 	//==========================================================================
 	//***********************************************
 	// [검색한 게시판 목록] 리턴하는 메소드 선언
 	//***********************************************
+	/*
 	public List<Map<String,String>> getBoardList(){
 		List<Map<String,String>> boardList = this.sqlSession.selectList(
 				"com.naver.erp.BoardDAO.getBoardList" // 실행할 SQL구문의 위치 지정
@@ -62,7 +78,15 @@ public class BoardDAOImpl implements BoardDAO {
 		
 		return boardList;
 	}	
-	
+	*/
+	public List<Map<String,String>> getBoardList(BoardSearchDTO boardSearchDTO){
+		List<Map<String,String>> boardList = this.sqlSession.selectList(
+				"com.naver.erp.BoardDAO.getBoardList" // 실행할 SQL구문의 위치 지정
+				,boardSearchDTO // 실행할 SQL 구문에서 사용할 데이터 지정
+			);
+		
+		return boardList;
+	}
 	//==========================================================================
 	//***********************************************
 	// [게시판 글 조회수 증가하고 수정행의 개수]를 리턴하는 메소드 선언
@@ -70,7 +94,7 @@ public class BoardDAOImpl implements BoardDAO {
 	public int updateReadcount(int b_no) {
 		//------------------------------------------------------
 		//[SqlSessionTemplate 객체]의 update(~,~)을 호출하여 [조회수 증가]하기
-		//------------------------------------------------------
+		//-----------------------------------------------------ㄴ-
 		int updateCnt = this.sqlSession.update(
 				"com.naver.erp.BoardDAO.updateReadcount" //실행할 SQL 구문의 위치 지정
 				, b_no	// 실행할 SQL 구문에서 사용할 데이터 지정
@@ -185,4 +209,6 @@ public class BoardDAOImpl implements BoardDAO {
 				);
 		return deleteCnt;
 	}
+
+
 }

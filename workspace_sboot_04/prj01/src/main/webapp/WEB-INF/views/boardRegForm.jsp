@@ -75,10 +75,17 @@
 					//즉 게시판 글 입력 성공 행의 개수 꺼내기
 					// 꺼낸 존재 개수의 앞 뒤 공백 제거하기
 					//--------------------------------------------
-						//alert(responseHtml);
-						var boardRegCnt = $(responseHtml).filter(".boardRegCnt").text();
-						boardRegCnt = $.trim(boardRegCnt);
-						boardRegCnt = parseInt(boardRegCnt,10);
+					//alert(responseHtml);
+					var boardRegCnt = $(responseHtml).filter(".boardRegCnt").text();
+					boardRegCnt = $.trim(boardRegCnt);
+					boardRegCnt = parseInt(boardRegCnt,10);
+
+					//방법1
+					var b_no = $("[name=boardRegForm] [name=b_no]").val();
+					//=================================================
+					//name=b_no의 value값이 0일 경우 (새글쓰기일 경우)
+					//=================================================
+					if(b_no=="0"){
 						//--------------------------------------------
 						//게시판 글 입력 성공 행의 개수가 1이면 즉 입력이 성공했으면
 						//--------------------------------------------
@@ -93,6 +100,24 @@
 						else{
 							alert("새글쓰기 실패");
 						}
+					//=================================================
+					//name=b_no의 value값이 0이 아닐 경우 (댓글쓰기일 경우)
+					//=================================================
+					}else{
+						//--------------------------------------------
+						//게시판 글 입력 성공 행의 개수가 1이면 즉 입력이 성공했으면
+						//--------------------------------------------
+						if(boardRegCnt==1){
+							alert("댓글쓰기 성공");
+							location.replace("/boardList.do");
+						}
+						//--------------------------------------------
+						//그렇지 않으면, 즉 입력이 실패했으면
+						//--------------------------------------------
+						else{
+							alert("댓글쓰기 실패");
+						}
+					}
 				}
 				//--------------------------------------------
 				// 서버의 응답을 못 받았을 경우 실행할 익명함수 설정
@@ -114,7 +139,16 @@
 		<!-- *************************************************** -->
 		<form name="boardRegForm" method="post" action="/boardRegProc.do">
 			<table border=1 cellpadding=5>
+			
+			<!-- HttpServletRequset 객체의 b_no가 null이면 새글쓰기 -->
+			<% if(request.getParameter("b_no")==null){ %>
 			<caption><b>새글쓰기</b></caption>
+			
+			<!-- HttpServletRequset 객체의 b_no가 null이 아니면 댓글쓰기 -->
+			<% }else{ %>
+			<caption><b>댓글쓰기</b></caption>
+			<% } %>
+			
 				<tr>
 					<th bgcolor="lightgray">이름</th>
 					<td><input type="text" name="writer" class="writer" size="10" maxlength=10></td>
@@ -141,7 +175,16 @@
 			<input type="reset" value="다시작성">
 			<input type="button" value="목록보기" onclick="location.replace('/boardList.do')">
 			
-			<!-- <input type="hidden" name="b_no" value="" > -->
+			<!-- 만약 파명 b_no의 파값이 null이면(새글쓰기)-->
+			<!-- name="b_no"를 가진 hidden 태그의 value에 0입력하기 -->
+			<% if(request.getParameter("b_no")==null){ %>
+				<input type="hidden" name="b_no" value="0" >
+				
+			<!-- 만약 파명 b_no의 파값이 null이 아니면(댓글쓰기)-->
+			<!-- name="b_no"를 가진 hidden 태그의 value에 현재 화면의 파값 입력하기 -->
+			<% }else{ %>
+				<input type="hidden" name="b_no" value="<%=request.getParameter("b_no")%>" >
+			<% } %>
 		</form>
 	</center>
 </body>
