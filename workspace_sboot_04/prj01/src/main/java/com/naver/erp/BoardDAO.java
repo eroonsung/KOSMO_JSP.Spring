@@ -21,6 +21,12 @@ public interface BoardDAO {
 	//***********************************************
 	//List<Map<String,String>> getBoardList();
 	List<Map<String,String>> getBoardList(BoardSearchDTO boardSearchDTO);
+	
+	//***********************************************
+	// [검색한 게시판 목록의 총 개수] 리턴하는 메소드 선언
+	//***********************************************	
+	int getBoardListAllCnt(BoardSearchDTO boardSearchDTO);
+	
 	//==========================================================================
 	//***********************************************
 	// [조회수를 1 증가후 업데이트한 행의 개수]를 리턴하는 메소드 선언

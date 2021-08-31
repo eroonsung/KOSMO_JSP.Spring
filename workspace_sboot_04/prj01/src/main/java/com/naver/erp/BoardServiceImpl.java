@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 	//[서비스 클래스]에는 @Service와 @Transactional를 붙인다
 	//@Service => [서비스 클래스]임을 지정하고 bean 태그로 자동 등록된다.
 	//@Transactional => [서비스 클래스]의 메소드 내부에서 일어나는 모든 작업에는 [트랜잭션]이 걸린다.
+	// DB연동의 세분화
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 @Service
 @Transactional

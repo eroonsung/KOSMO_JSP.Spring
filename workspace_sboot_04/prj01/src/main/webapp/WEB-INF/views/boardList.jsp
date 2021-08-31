@@ -77,7 +77,7 @@
 		}
 
 		// **********************************************************
-		// 
+		// [모두검색] 버튼을 눌렀을때 전체 결과물 보이는 함수 선언
 		// **********************************************************
 		function searchAll(){
 			$(".keyword1").val("");
@@ -95,8 +95,26 @@
 				, type :"post"
 				, data: $("[name=boardListForm]").serialize()
 				, success: function(responseHtml){
-					var html = $(responseHtml).find(".searchResult").html();
-					$(".searchResult").html(html);
+					//-----------------------------------------
+					//매개변수 responseHtml로 들어온 검색 결과물 html 소스 문자열에서
+					//class=searchResult를 가진 태그 내부의 [검색 결과물 html 소스]를 얻어서
+					//아래 현 화면의 html 소스 중에 class=searchResult를 가진 태그 내부에 덮어씌우기
+					//-----------------------------------------
+					//var html = $(responseHtml).find(".searchResult").html();
+					//$(".searchResult").html(html);
+					$(".searchResult").html(
+						 $(responseHtml).find(".searchResult").html()
+						);
+					//-----------------------------------------
+					//매개변수 responseHtml로 들어온 검색 결과물 html 소스 문자열에서
+					//class=boardListAllCnt를 가진 태그 내부의 [총 개수 문자열]을 얻어서
+					//아래 현 화면의 html 소스 중에 class=boardListAllCnt를 가진 태그 내부에 덮어씌우기
+					//-----------------------------------------
+					//var text = $(responseHtml).find(".count").text();
+					//$(".count").text(text);
+					$(".boardListAllCnt").text(
+						 $(responseHtml).find(".boardListAllCnt").text()
+						);
 				}
 				,error: function(){
 					alert("서버 접속 실패");
@@ -115,13 +133,27 @@
 		<!-- ******************************************** -->
 		<form name="boardListForm" method="post">
 			[키워드] : <input type="text" name="keyword1" class="keyword1">
+			<!-- <input type="text" name="keyword1" class="keyword1" onKeydown="if(event.keyCode==13){search();}"> -->
+			
+			<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">			
+			<select name="rowCntPerPage" class="rowCntPerPage" onChange="search();">
+				<option value="10">10
+				<option value="15">15
+				<option value="20">20
+				<option value="25">25
+				<option value="30">30
+			</select>행 보기
 			
 			<input type="button" value=" 검색 " class="contactSearch" onClick="search();">&nbsp;
 			<input type="button" value="모두검색" class="contactSearchAll" onClick="searchAll();">&nbsp;
 			
+			<!-- hidden 태그는 서버에 데이터를 보낼 때 사용함 -->
+			
 			<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>	
 		</form>
 		<div style="height:5px"></div>
+		
+		<div class="boardListAllCnt">총 <%=(Integer)request.getAttribute("boardListAllCnt")%>개</div>
 		
 		<div class="searchResult">
 			<table border=1>
@@ -172,3 +204,64 @@
 </body>
 
 </html>
+
+
+
+
+<!-- 
+
+		페이징 처리
+		mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+		공식 => [페이지 당 보여줄 행의 개수], [선택페이지번호], [총개수]로
+		        검색 결과물의 [시작행 번호]과 검색 결과물의 [끝행 번호]를 구하는 공식
+				단 변수는 아래와 같다.
+		------------------------------------------------------------------
+					totCnt        => 검색된 총 결과물 개수
+					rowCntPerPage => 페이지 당 보여줄 행의 개수
+					selectPageNo  => 선택한 페이지 번호
+					beginRowNo    => 검색된 총 결과물에서 가져올 범위의 시작행
+					endRowNo      => 검색된 총 결과물에서 가져올 범위의 끝행
+		mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+		if( totCnt>0){
+			int endRowNo = selectPageNo * rowCntPerPage;
+			int beginRowNo = endRowNo - rowCntPerPage + 1;
+			if( endRowNo>totCnt ){
+				endRowNo = totCnt;
+			}
+		}
+		---------------------------------
+		if( totCnt>0){
+			int beginRowNo = selectPageNo * rowCntPerPage - rowCntPerPage + 1;
+			int endRowNo = beginRowNo + rowCntPerPage -1;
+			if( endRowNo>totCnt ){
+				endRowNo = totCnt;
+			}
+		}
+
+
+		mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+		공식 => [총개수], [페이지 당 보여줄 행의 개수],[선택된페이지번호]
+		        [한 화면에 보여지는 페이지 번호 개수]로
+		
+		        [현재 화면에 보여지는 페이지 번호의 최소 번호]과 
+		        [현재 화면에 보여지는 페이지 번호의 최대 번호]를 구하는 공식
+				단 변수는 아래와 같다.
+		------------------------------------------------------------------
+					totCnt            => 검색된 총 결과물 개수
+					rowCntPerPage => 페이지 당 보여줄 행의 개수
+					selectPageNo      => 선택한 페이지 번호
+					pageNoCntPerPage  => 페이지 당 보여줄 페이지 번호의 개수
+					pageMinNo  => 현재 화면에 보여지는 페이지 번호의 최소 페이지 번호
+					pageMaxNo  => 현재 화면에 보여지는 페이지 번호의 최대 페이지 번호
+		mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+		if( totCnt>0 ) {
+			int last_pageNo = totCnt/rowCntPerPage;
+				if( totCnt%rowCntPerPage>0 ) { last_pageNo++; }
+			int min_pageNo = ((selectPageNo-1)/pageNoCntPerPage)*pageNoCntPerPage+1;
+			int max_pageNo = min_pageNo+pageNoCntPerPage-1;
+				if( max_pageNo>last_pageNo ){
+					max_pageNo = last_pageNo ;
+				}
+		}
+
+ -->

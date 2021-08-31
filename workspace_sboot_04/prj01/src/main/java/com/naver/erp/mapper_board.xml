@@ -5,6 +5,28 @@
 <!-- mapper 태그 선언 -->
 <!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm -->
 <mapper namespace="com.naver.erp.BoardDAO">
+
+	<!-- ******************************************************* -->
+	<!-- 게시판 글 목록을 구할때 사용할 where절을 sql태그 안에 선언하기 -->
+	<!-- ******************************************************* -->
+	<sql id="boardWhere">
+	    <!-- ================================================================= -->
+    	<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기  -->
+    	<!-- ================================================================= -->
+	    	<if test="keyword1!=null and keyword1.length()>0">
+	    	and (
+		    	upper(subject) like upper('%${keyword1}%') 
+		    	or upper(content) like upper('%${keyword1}%') 
+		    	or upper(writer) like upper('%${keyword1}%') 
+		    	or upper(email) like upper('%${keyword1}%') 
+		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+		    	)
+		    </if>
+	</sql>
+
 	<!-- ============================================================================= -->
 	<!-- ******************************************************* -->
 	<!-- 게시판 글을 입력하는 insert 문을 내포한 insert 태그 선언 -->
@@ -89,7 +111,8 @@
 	 -->
 	 <!-- 만약 #을 쓰면 '%'김'%'이 되기때문에 오류 -->
 	 <!-- $ : 데이터를 꺼낼때 그냥 꺼내서 넣음 -->
-		
+	  
+	<!-- 
 	<select id="getBoardList" parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
 		select
 			b_no||'' 						 "b_no"
@@ -101,11 +124,9 @@
 	    from 
 	    	board
 	    where
-	    	1=1 <!-- 항상 성립하는 조건 하나를 작성해둠 => 조건이 여러개 생길때 에러 방지 -->
+	    	1=1  항상 성립하는 조건 하나를 작성해둠 => 조건이 여러개 생길때 에러 방지 
 	    	
-	    	<!-- ============================================== -->
-	    	<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기 -->
-	    	<!-- ============================================== -->
+	    	 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기 
 	    	<if test="keyword1!=null and keyword1.length()>0">
 	    	and (
 		    	upper(subject) like upper('%${keyword1}%') 
@@ -122,7 +143,63 @@
         order by 
         	group_no desc, print_no asc
 	</select>
-		
+	 -->
+	 
+ 	<!-- 페이징 처리 후 검색 select 문 -->
+	<select id="getBoardList" parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+	
+		select * 
+		from (select rownum RNUM, zxcvb.*
+		        from (
+		        	select
+					b_no||'' 						 "b_no"
+				    , subject                        "subject"
+				    , writer                         "writer"
+				    , readcount||''                  "readcount"
+				    , to_char(reg_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "reg_date"
+				    , print_level||''				 "print_level"
+			    from 
+			    	board
+			    where
+			    	1=1  <!--  항상 성립하는 조건 하나를 작성해둠 => 조건이 여러개 생길때 에러 방지 -->
+	    			<!-- ================================================================= -->
+  					<!-- <sql id="boardWhere">태그 안에 삽입된 SQL 구문 삽입하기  -->
+  					<!-- ================================================================= -->
+					<include refid="boardWhere"/>
+		        order by 
+		        	group_no desc, print_no asc
+		                )zxcvb
+		        <!-- 부등호를 태그의 시작으로 인식하기 때문에 <![CDATA[비교문 입력]]>을 사용함 -->
+		        <!-- CDATA: character data -->
+			        <![CDATA[
+			        where rownum <= ${selectPageNo * rowCntPerPage}  )
+			    	where RNUM >= ${((selectPageNo-1)*rowCntPerPage)+1}
+			        ]]>
+		        <!--  
+		        where rownum &lt;= 10)
+				where  RNUM &gt;= 1
+				-->
+	
+	</select>
+	
+	<!-- ******************************************************* -->
+	<!-- 검색된 게시판 목록의 총 개수를 나타내는 select문을 내포한 select 태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getBoardListAllCnt" parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+		select 
+			count(*) 
+		from 
+			board 
+	    where
+	    	1=1 <!-- 항상 성립하는 조건 하나를 작성해둠 => 조건이 여러개 생길때 에러 방지 -->
+	    		<!-- 무조건 where절이 작동하게 함 -->
+   		    <!-- ================================================================= -->
+			<!-- <sql id="boardWhere">태그 안에 삽입된 SQL 구문 삽입하기  -->
+			<!-- ================================================================= -->
+			<include refid="boardWhere"/>
+
+	</select>
+	
 	<!-- ============================================================================= -->
 	<!-- ******************************************************* -->
 	<!-- 조회수를 1 증가하는 update 문을 내포한 update 태그 선언 -->

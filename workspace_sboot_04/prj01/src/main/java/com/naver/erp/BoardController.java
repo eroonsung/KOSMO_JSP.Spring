@@ -81,24 +81,32 @@ public class BoardController {
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
 			BoardSearchDTO boardSearchDTO
 		) {
-		System.out.println("BoardController.getBoardList 메소드 호출 시작");
+		//System.out.println("BoardController.getBoardList 메소드 호출 시작");
 		//----------------------------------------------------
 		//오라클 board테이블 안의 데이터(n행m열)를 검색해서 자바 객체에 저장하기	
-		// 즉, [게시판 목록] 얻기
+		// 즉, [검색조건에 맞는 게시판 목록] 얻기
 		// 트랜잭션이 걸리지 않기 때문에 @Service, @Transactional 클래스 만들지 않아도 됨
 		//----------------------------------------------------
 		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		
+		//----------------------------------------------------
+		//검색 조건에 맞는 모든 행의 개수
+		// 즉 [검색된 게시판 목록의 총 개수] 얻기
+		//----------------------------------------------------
+		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 	
 		//----------------------------------------------------
 		//[ModelAndView 객체] 생성하기
 		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
 		//[ModelAndView 객체]에 [게시판 목록 검색 결과] 저장하기
+		//[ModelAndView 객체]에 [게시판 목록 검색 결과의 총 개수ㄴ] 저장하기
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
 		mav.addObject("boardList", boardList);
-		System.out.println("BoardController.getBoardList 메소드 호출 완료");
+		mav.addObject("boardListAllCnt", boardListAllCnt);
+		//System.out.println("BoardController.getBoardList 메소드 호출 완료");
 		return mav;
 	}
 	

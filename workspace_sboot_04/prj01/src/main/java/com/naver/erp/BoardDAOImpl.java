@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 //[DAO 클래스]인 [BoardDAOImpl 클래스] 선언
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	// @Repository를 붙임으로써 [DAO 클래스]임을 지정하게 되고, bean태그로 자동 등록된다.
+	// DB연동의 최전선 => 오라클과 맞닿아 있음
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 
 @Repository
@@ -87,6 +88,19 @@ public class BoardDAOImpl implements BoardDAO {
 		
 		return boardList;
 	}
+	
+	//***********************************************
+	// [검색한 게시판 목록의 총 개수] 리턴하는 메소드 선언
+	//***********************************************	
+	public int getBoardListAllCnt(BoardSearchDTO boardSearchDTO) {
+		int boardListAllCnt = this.sqlSession.selectOne(
+				"com.naver.erp.BoardDAO.getBoardListAllCnt"
+				, boardSearchDTO
+			);
+		
+		return boardListAllCnt;
+	}
+	
 	//==========================================================================
 	//***********************************************
 	// [게시판 글 조회수 증가하고 수정행의 개수]를 리턴하는 메소드 선언
