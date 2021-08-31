@@ -18,12 +18,68 @@
 		$("[name=boardContentForm] [name=b_no]").val(b_no);
 		document.boardContentForm.submit();
 	}
+
+	function search(){
+		var keyword1 = $(".keyword1").val();
+		if(keyword1==null||keyword1.split(" ").join("")==""){
+			alert("키워드가 비어있어 검색하지 않습니다.");
+			$(".keyword1").val("");
+			$(".keyword1").focus();
+			return;
+		}
+		$(".keyword1").val($.trim(keyword1));
+		searchExe();
+	}
+
+	function searchAll(){
+		$(".keyword1").val("");
+		searchExe();
+	}
+
+	function searchExe(){
+		$.ajax({
+			url: "/boardList.do"
+			, type: "post"
+			, data: $("[name=boardListForm]").serialize()
+			, success: function(responseHtml){
+				var html = $(responseHtml).find(".searchResult").html();
+				$(".searchResult").html(html);
+
+				var text = $(responseHtml).find(".boardListAllCnt").text();
+				$(".boardListAllCnt").text(text); 
+			}
+			, error: function(){
+				alert("서버 접속 실패");
+			}
+		})
+	}
 		
 </script>
 </head>
 <body>
 	<center>
+	<form name="boardListForm" method="post">
+		[키워드] : <input type="text" name="keyword1" class="keyword1">
+		
+		<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">
+		<select name="rowCntPerPage" class="rowCntPerPage" onChange="search();">
+			<option value="10">10
+			<option value="15">15
+			<option value="20">20
+			<option value="25">25
+			<option value="30">30
+		</select>
+		
+		<input type="button" value=" 검색 " class="contactSearch" onClick="search();">
+		<input type="button" value="모두검색" class="contactSearchAll" onClick="searchAll();">
+	
+	</form>
 		<a href="javascript:goBoardRegForm()">[새글쓰기]</a>
+		<div style="height:5px"></div>
+		
+		<div class="boardListAllCnt">총 <%=(Integer)request.getAttribute("boardListAllCnt")%>개</div>
+		
+		<div class="searchResult">
 		<table border=1>
 			<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
 			<%
@@ -55,6 +111,7 @@
 			}
 			%>
 		</table>
+		</div>
 		
 		<form name="boardContentForm" method="post" action="boardContentForm.do">
 			<input type="hidden" name="b_no">

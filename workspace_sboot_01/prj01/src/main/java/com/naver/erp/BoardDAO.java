@@ -5,10 +5,15 @@ import java.util.Map;
 
 public interface BoardDAO {
 	//--------------------------------------------------------------------------
-	List<Map<String,String>> getBoardList();
+	// List<Map<String,String>> getBoardList();
+	List<Map<String,String>> getBoardList(BoardSerachDTO boardSearchDTO);
+	
+	int getBoardListAllCnt(BoardSerachDTO boardSearchDTO);
 	
 	//--------------------------------------------------------------------------
 	int insertBoard(BoardDTO boardDTO);
+	
+	int updatePrintNo(BoardDTO boardDTO);
 	
 	//--------------------------------------------------------------------------
 	int updateReadcount(int b_no);

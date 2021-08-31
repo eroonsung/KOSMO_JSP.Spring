@@ -9,7 +9,9 @@
 <title>Insert title here</title>
 <script src="/resources/jquery-1.11.0.min.js"></script>
 <script>
-	function goBoardRegForm(){}
+	function goBoardRegForm(){
+			document.boardRegForm.submit();
+		}
 	function goBoardUpDelForm(){
 			document.boardUpDelForm.submit();
 		}
@@ -71,6 +73,10 @@
 	</center>
 	
 	<form name="boardUpDelForm" method="post" action="/boardUpDelForm.do">
+		<input type="hidden" name="b_no" value=<%=b_no%>>
+	</form>
+	
+	<form name="boardRegForm" method="post" action="/boardRegForm.do">
 		<input type="hidden" name="b_no" value=<%=b_no%>>
 	</form>
 </body>

@@ -14,13 +14,29 @@ public class BoardDAOImpl implements BoardDAO{
 	private SqlSessionTemplate sqlSession;
 	
 	//--------------------------------------------------------------------------
+	/*
 	public List<Map<String,String>> getBoardList(){
 		List<Map<String,String>> boardList = this.sqlSession.selectList(
 				"com.naver.erp.BoardDAO.getBoardList"
 				);
 		return boardList;
 	};
+	*/
+	public List<Map<String,String>> getBoardList(BoardSerachDTO boardSearchDTO){
+		List<Map<String,String>> boardList = this.sqlSession.selectList(
+				"com.naver.erp.BoardDAO.getBoardList"
+				, boardSearchDTO
+				);
+		return boardList;
+	};
 	
+	public int getBoardListAllCnt(BoardSerachDTO boardSearchDTO) {
+		int boardListAllCnt = this.sqlSession.selectOne(
+				"com.naver.erp.BoardDAO.getBoardListAllCnt"
+				, boardSearchDTO				
+				);
+		return boardListAllCnt;
+	}
 	//--------------------------------------------------------------------------
 	public int insertBoard(BoardDTO boardDTO) {
 		int boardRegCnt = this.sqlSession.insert(
@@ -28,6 +44,14 @@ public class BoardDAOImpl implements BoardDAO{
 				,boardDTO
 			);
 		return boardRegCnt;
+	}
+	
+	public int updatePrintNo(BoardDTO boardDTO) {
+		int updatePrintNoCnt = this.sqlSession.update(
+				"com.naver.erp.BoardDAO.updatePrintNo"
+				,boardDTO
+			);
+		return updatePrintNoCnt;
 	}
 	
 	//--------------------------------------------------------------------------

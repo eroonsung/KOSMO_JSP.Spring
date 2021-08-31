@@ -23,6 +23,7 @@ public class BoardController {
 	private BoardService boardService;
 	
 	//===========================================================================
+	/*
 	@RequestMapping(value="boardList.do")
 	public ModelAndView goBoardList() {
 		
@@ -33,7 +34,22 @@ public class BoardController {
 		mav.addObject("boardList",boardList);
 		return mav;
 	}
+	*/
+	@RequestMapping(value="boardList.do")
+	public ModelAndView goBoardList(BoardSerachDTO boardSearchDTO ) {
+		
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		
+		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardList.jsp");
+		mav.addObject("boardList",boardList);
+		mav.addObject("boardListAllCnt",boardListAllCnt);
+		return mav;
+	}
 	//----------------------------------------------------------------------------
+	/*
 	@RequestMapping(value="boardRegForm.do")
 	public ModelAndView goBoardRegForm() {
 		
@@ -41,6 +57,15 @@ public class BoardController {
 		mav.setViewName("boardRegForm.jsp");
 		return mav;
 	}
+	*/
+	@RequestMapping(value="boardRegForm.do")
+	public ModelAndView goBoardRegForm( @RequestParam(value="b_no", required=false, defaultValue="0") int b_no) {
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardRegForm.jsp");
+		return mav;
+	}
+	
 	//----------------------------------------------------------------------------
 	@RequestMapping(value="boardRegProc.do")
 	public ModelAndView insertBoard(BoardDTO boardDTO, BindingResult bindingResult) {
@@ -54,7 +79,6 @@ public class BoardController {
 			
 			if(msg.equals("")) {
 				int boardRegCnt = this.boardService.insertBoard(boardDTO);
-				System.out.println("boardRegCnt=>"+boardRegCnt);
 				mav.addObject("boardRegCnt",boardRegCnt);
 			}else {
 				mav.addObject("boardRegCnt",0);
@@ -92,7 +116,7 @@ public class BoardController {
 	//----------------------------------------------------------------------------
 	@RequestMapping(value="boardUpDelForm.do")
 	public ModelAndView goBoardUpDelForm(@RequestParam(value="b_no") int b_no) {
-		BoardDTO boardDTO = this.boardDAO.getBoard(b_no);
+		BoardDTO boardDTO = this.boardService.getBoard(b_no);
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardUpDelForm.jsp");

@@ -10,10 +10,21 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDAO boardDAO;
 
 	//----------------------------------------------------------------------------
+	/*
 	public int insertBoard(BoardDTO boardDTO) {
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
 		return boardRegCnt;
 	}
+	*/
+	public int insertBoard(BoardDTO boardDTO) {
+		if(boardDTO.getB_no()>0) {
+			int updatePrintNoCnt = this.boardDAO.updatePrintNo(boardDTO);
+		}
+		
+		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
+		return boardRegCnt;
+	}
+	
 	
 	//----------------------------------------------------------------------------
 	public BoardDTO getBoard(int b_no) {
