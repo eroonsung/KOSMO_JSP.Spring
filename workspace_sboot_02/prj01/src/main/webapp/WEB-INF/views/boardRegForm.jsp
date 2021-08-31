@@ -37,11 +37,21 @@
 				boardRegCnt=$.trim(boardRegCnt);
 				boardRegCnt = parseInt(boardRegCnt,10);
 
-				if(boardRegCnt==1){
-					alert("새글쓰기 성공")
-					location.replace("boardList.do")
-				}else {
-					alert("새글쓰기 실패")
+				var b_no = $("[name=b_no]").val();
+				if(b_no==0){
+					if(boardRegCnt==1){
+						alert("새글쓰기 성공")
+						location.replace("boardList.do")
+					}else {
+						alert("새글쓰기 실패")
+					}
+				}else{
+					if(boardRegCnt==1){
+						alert("댓글쓰기 성공")
+						location.replace("boardList.do")
+					}else {
+						alert("댓글쓰기 실패")
+					}
 				}
 			}
 			, error: function(){
@@ -61,7 +71,11 @@
 		<!-- *************************************************** -->
 		<form name="boardRegForm" method="post" action="/boardRegProc.do">
 			<table border=1 cellpadding=5>
+			<%if(request.getParameter("b_no")==null){ %>
 			<caption><b>새글쓰기</b></caption>
+			<%}else{ %>
+			<caption><b>댓글쓰기</b></caption>
+			<%} %>
 				<tr>
 					<th bgcolor="lightgray">이름</th>
 					<td><input type="text" name="writer" class="writer" size="10" maxlength=10></td>
@@ -88,7 +102,11 @@
 			<input type="reset" value="다시작성">
 			<input type="button" value="목록보기" onclick="location.replace('/boardList.do')">
 			
-			<!-- <input type="hidden" name="b_no" value="" > -->
+			<%if(request.getParameter("b_no")==null){ %>
+				<input type="hidden" name="b_no" value="0" >
+			<%}else{ %>
+				<input type="hidden" name="b_no" value="<%=request.getParameter("b_no")%>" >
+			<%} %>
 		</form>
 	</center>
 

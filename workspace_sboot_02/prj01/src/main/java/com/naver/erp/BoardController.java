@@ -27,15 +27,19 @@ public class BoardController {
 	//가상 주소 /loginForm.do로 접근하면 호출되는 메소드 선언
 	//***********************************************
 	@RequestMapping(value="boardList.do")
-	public ModelAndView goBoardList() {
+	public ModelAndView goBoardList(BoardSearchDTO boardSearchDTO) {
 		System.out.println("BoardController.goBoardList 메소드 시작");
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		System.out.println("BoardController.goBoardList 메소드 완료");
 		
-		List<Map<String,String>> boardList = this.boardDAO.getBoardList();
+		System.out.println("BoardController.getBoardListAllCnt 메소드 시작");
+		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
+		System.out.println("BoardController.getBoardListAllCnt 메소드 완료");
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
 		mav.addObject("boardList",boardList);
-		System.out.println("BoardController.goBoardList 메소드 완료");
+		mav.addObject("boardListAllCnt",boardListAllCnt);
 		return mav;
 	}
 	
@@ -43,7 +47,9 @@ public class BoardController {
 	//가상 주소 /boardRegForm.do로 접근하면 호출되는 메소드 선언
 	//***********************************************
 	@RequestMapping(value="boardRegForm.do")
-	public ModelAndView goBoardRegForm() {
+	public ModelAndView goBoardRegForm(
+			@RequestParam(value="b_no", required=false, defaultValue="0")int b_no
+			) {
 		System.out.println("BoardController.goBoardRegForm 메소드 시작");
 		
 		ModelAndView mav = new ModelAndView();

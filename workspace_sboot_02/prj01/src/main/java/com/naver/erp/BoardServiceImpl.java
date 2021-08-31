@@ -17,6 +17,11 @@ public class BoardServiceImpl implements BoardService{
 	// [1개 게시판 글 입력 후 입력 적용 행의 개수]를 리턴하는 메소드 선언
 	//*************************************************
 	public int insertBoard(BoardDTO boardDTO) {
+		if(boardDTO.getB_no()>0) {
+			System.out.println("	BoardServiceImpl.updatePrintNo 메소드 시작");
+			int updatePrintNoCnt = this.boardDAO.updatePrintNo(boardDTO);
+			System.out.println("	BoardServiceImpl.updatePrintNo 메소드 완료");
+		}
 		System.out.println("	BoardServiceImpl.insertBoard 메소드 시작");
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
 		

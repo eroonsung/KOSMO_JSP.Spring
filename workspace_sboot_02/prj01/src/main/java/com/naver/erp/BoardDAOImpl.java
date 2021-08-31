@@ -19,15 +19,30 @@ public class BoardDAOImpl implements BoardDAO{
 	//***********************************************
 	// [게시판 글 입력 후 입력 적용 행의 개수] 리턴하는 메소드 선언
 	//***********************************************
-	public List<Map<String,String>> getBoardList(){
+	public List<Map<String,String>> getBoardList(BoardSearchDTO boardSearchDTO){
 		System.out.println("		BoardDAOImpl.getBoardList 메소드 시작");
 		
 		List<Map<String,String>> boardList = this.sqlSession.selectList(
 				"com.naver.erp.BoardDAO.getBoardList" 
+				, boardSearchDTO
 			);
 		
 		System.out.println("		BoardDAOImpl.getBoardList 메소드 완료");
 		return boardList;
+	}
+	
+	//***********************************************
+	// [검색한 게시판 목록의 총 개수] 리턴하는 메소드 선언
+	//***********************************************
+	public int getBoardListAllCnt(BoardSearchDTO boardSearchDTO) {
+		System.out.println("		BoardDAOImpl.getBoardListAllCnt 메소드 시작");
+		int boardListAllCnt = this.sqlSession.selectOne(
+				"com.naver.erp.BoardDAO.getBoardListAllCnt"
+				, boardSearchDTO
+			);
+		
+		System.out.println("		BoardDAOImpl.getBoardListAllCnt 메소드 완료");
+		return boardListAllCnt;
 	}
 	//==========================================================================
 	//***********************************************
@@ -43,6 +58,21 @@ public class BoardDAOImpl implements BoardDAO{
 				
 		System.out.println("		BoardDAOImpl.insertBoard 메소드 완료");
 		return boardRegCnt;
+	}
+	
+	//***********************************************
+	//[1개 게시판 글 출력번호 1 증가하고 수정 행의 개수]리턴하는 메소드 선언
+	//***********************************************
+	public int updatePrintNo(BoardDTO boardDTO) {
+		System.out.println("		BoardDAOImpl.updatePrintNo 메소드 시작");
+		
+		int updatePrintNoCnt = this.sqlSession.update(
+				"com.naver.erp.BoardDAO.updatePrintNo"
+				, boardDTO
+				);
+				
+		System.out.println("		BoardDAOImpl.updatePrintNo 메소드 완료");
+		return updatePrintNoCnt;
 	}
 	
 	//==========================================================================

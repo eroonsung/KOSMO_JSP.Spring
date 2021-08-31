@@ -27,45 +27,101 @@
 		$("[name=boardContentForm] [name=b_no]").val(b_no);
 		document.boardContentForm.submit();
 	}
+
+	function search(){
+		var keyword1 = $(".keyword1").val();
+		if(keyword1.split(" ").join("")==""){
+			alert("키워드가 비어있어 검색하지 않습니다.");
+			$(".keyword1").val("");
+			$(".keyword1").focus();
+			return;
+		}
+		$(".keyword1").val($.trim(keyword1));
+		searchExe();
+	}
+	
+	function searchAll(){
+		$(".keyword1").val("");
+		searchExe();
+	}
+
+	function searchExe(){
+		$.ajax({
+			url: "/boardList.do"
+			, type: "post"
+			, data: $("[name=boardListForm]").serialize()
+			, success: function(responseHtml){
+				var html = $(responseHtml).find(".searchResult").html();
+				$(".searchResult").html(html);
+				
+				var text = $(responseHtml).find(".boardListAllCnt").text();
+				$(".boardListAllCnt").text(text);
+			}
+			, error: function(){
+				alert("서버 접속 실패");
+			}
+		})
+	}
 	
 </script>
 </head>
 
 <body>
 	<center>
+		<form name="boardListForm" method="post">
+		[키워드] : <input type="text" name="keyword1" class="keyword1">
+		
+		<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">
+		<select name="rowCntPerPage" class="rowCntPerPage" onChange="search();">
+			<option value="10">10
+			<option value="15">15
+			<option value="20">20
+			<option value="25">25
+			<option value="30">30
+		</select>행 보기
+		
+		<input type="button" value=" 검색 " class="boardSearch" onClick="search();">
+		<input type="button" value="모두검색" class="boardSearchAll" onClick="searchAll();">
+				
+		</form>
+	
 		<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>
 		
-		<table border=1>
-		<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
-		<%
-		List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
-		if(boardList!=null){
-			int totCnt = boardList.size();
-			for(int i=0; i<boardList.size(); i++){
-				Map<String,String> map= boardList.get(i);
+		<div class="boardListAllCnt">총 <%=request.getAttribute("boardListAllCnt")%>개</div>
+		
+		<div class="searchResult">
+			<table border=1>
+			<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
+			<%
+			List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
+			if(boardList!=null){
+				int totCnt = boardList.size();
+				for(int i=0; i<boardList.size(); i++){
+					Map<String,String> map= boardList.get(i);
+					
+				String b_no = map.get("b_no");
 				
-			String b_no = map.get("b_no");
-			
-			String subject = map.get("subject");
-			String writer = map.get("writer");
-			String readcount = map.get("readcount");
-			String reg_date = map.get("reg_date");
-			
-			String print_level = map.get("print_level");
-			int print_level_int = Integer.parseInt(print_level,10);
-			
-			String xxx= "";
-			for(int j=0; j<print_level_int; j++){
-				xxx=xxx+"&nbsp&nbsp&nbsp&nbsp";
-			}
-			if(print_level_int>0){xxx=xxx+"ㄴ";}
-			
-			out.println("<tr style='cusror:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"
-				+(totCnt--)+"<td>"+xxx+subject+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
-			}
-		}		
-		%>
-		</table>
+				String subject = map.get("subject");
+				String writer = map.get("writer");
+				String readcount = map.get("readcount");
+				String reg_date = map.get("reg_date");
+				
+				String print_level = map.get("print_level");
+				int print_level_int = Integer.parseInt(print_level,10);
+				
+				String xxx= "";
+				for(int j=0; j<print_level_int; j++){
+					xxx=xxx+"&nbsp&nbsp&nbsp&nbsp";
+				}
+				if(print_level_int>0){xxx=xxx+"ㄴ";}
+				
+				out.println("<tr style='cursor:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"
+					+(totCnt--)+"<td>"+xxx+subject+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
+				}
+			}		
+			%>
+			</table>
+		</div>
 		<!-- ******************************************** -->
 		<!-- 게시판 상세보기 화면으로 이동하는 form 태그 선언하기 -->
 		<!-- ******************************************** -->

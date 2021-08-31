@@ -6,11 +6,16 @@ import java.util.Map;
 public interface BoardDAO {
 	//==========================================================================
 	//***********************************************
-	List<Map<String, String>> getBoardList();
+	List<Map<String, String>> getBoardList(BoardSearchDTO boardSearchDTO);
+
+	int getBoardListAllCnt(BoardSearchDTO boardSearchDTO);
 
 	//==========================================================================
 	//***********************************************
 	int insertBoard(BoardDTO boardDTO);
+	
+	//***********************************************
+	int updatePrintNo(BoardDTO boardDTO);
 
 	//==========================================================================
 	//***********************************************

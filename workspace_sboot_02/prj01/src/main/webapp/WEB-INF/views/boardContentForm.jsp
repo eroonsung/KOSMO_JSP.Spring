@@ -12,7 +12,9 @@
 <title>Insert title here</title>
 <script src="/resources/jquery-1.11.0.min.js"></script>
 <script>
-	function goBoardRegForm(){}
+	function goBoardRegForm(){
+		document.boardRegForm.submit();
+	}
 	
 	//--------------------------------------------
 	//게시판 수정/삭제 화면으로 이동하는 함수 선언
@@ -24,6 +26,7 @@
 </script>
 </head>
 <body>
+	
 	<center>
 		<%
 		BoardDTO boardDTO = (BoardDTO)request.getAttribute("boardDTO");
@@ -80,6 +83,13 @@
 	<!-- [게시판 수정/삭제 화면으로 이동하는 form태그 선언] -->
 	<!-- ********************************************************** -->
 	<form name="boardUpDelForm" method="post" action="/boardUpDelForm.do">
+		<input type="hidden" name="b_no" value=<%=b_no%>>
+	</form>
+	
+	<!-- ********************************************************** -->
+	<!-- [댓글쓰기 화면으로 이동하는 form태그 선언] -->
+	<!-- ********************************************************** -->
+	<form name="boardRegForm" method="post" action="/boardRegForm.do">
 		<input type="hidden" name="b_no" value=<%=b_no%>>
 	</form>
 </body>

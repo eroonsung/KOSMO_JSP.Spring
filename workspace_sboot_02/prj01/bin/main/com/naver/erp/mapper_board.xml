@@ -3,16 +3,55 @@
 
 <mapper namespace="com.naver.erp.BoardDAO">
 	<!-- ======================================================================================= -->
-	<select id="getBoardList" resultType="java.util.HashMap">
-		select
-			b_no||'' 						 "b_no"
-		    , subject                        "subject"
-		    , writer                         "writer"
-		    , readcount||''                  "readcount"
-		    , to_char(reg_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "reg_date"
-		    , print_level||''				 "print_level"
-	    from board
-        order by group_no desc, print_no asc
+	<sql id="boardWhere">
+		<!-- ============================================== -->
+    	<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기 -->
+    	<!-- ============================================== -->
+    	<if test="keyword1!=null and keyword1.length()>0">
+    	and (
+	    	upper(subject) like upper('%${keyword1}%') 
+	    	or upper(content) like upper('%${keyword1}%') 
+	    	or upper(writer) like upper('%${keyword1}%') 
+	    	or upper(email) like upper('%${keyword1}%') 
+	    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+	    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+	    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+	    	)
+	    </if>
+	</sql>
+	
+	<!-- ======================================================================================= -->
+	<select id="getBoardList" parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+		select * 
+		from (select rownum RNUM, zxcvb.*
+				from (
+						select
+							b_no||'' 						 "b_no"
+						    , subject                        "subject"
+						    , writer                         "writer"
+						    , readcount||''                  "readcount"
+						    , to_char(reg_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "reg_date"
+						    , print_level||''				 "print_level"
+					    from board
+					    where 
+					    	1=1
+					    	<include refid="boardWhere"/>
+				        order by group_no desc, print_no asc
+					)zxcvb
+					<![CDATA[
+				where rownum<=${selectPageNo*rowCntPerPage})
+		where RNUM>=${((selectPageNo-1)*rowCntPerPage)+1}
+		]]>
+
+	</select>
+	
+	<select id="getBoardListAllCnt" parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+		select count(*)
+		from board
+		where 
+			1=1
+			<include refid="boardWhere"/>
 	</select>
 
 	<!-- ======================================================================================= -->
@@ -36,11 +75,27 @@
 			 , #{content} 
 			 , #{pwd} 
 			 , #{email} 
+			 
+			 <if test="b_no==0">
 			 , (select nvl(max(b_no),0)+1 from board)
 			 , 0
 			 , 0
+			 </if>
+			 
+			 <if test="b_no>0">
+			 , (select group_no from board where b_no=#{b_no})
+			 , (select print_no+1 from board where b_no=#{b_no})
+			 , (select print_level+1 from board where b_no=#{b_no})
+			 </if>
 		)	
 	</insert>
+	
+	<update id="updatePrintNo" parameterType="com.naver.erp.BoardDTO">
+		update board set print_no = print_no+1
+		where
+			group_no = (select group_no from board where b_no=#{b_no})
+			and print_no > (select print_no from board where b_no=#{b_no}) 
+	</update>
 	
 	<!-- ======================================================================================= -->
 	<update id="updateReadcount" parameterType="int">
