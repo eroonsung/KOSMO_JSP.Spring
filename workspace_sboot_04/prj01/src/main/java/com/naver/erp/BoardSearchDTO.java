@@ -9,6 +9,8 @@ public class BoardSearchDTO {
 	private String keyword1;
 	
 	//에러 방지를 위해 default값을 먼저 주고 시작
+	//location.reaplace로 처음 들어올때 아무런 파라미터도 가지고 오지 않기 때문에
+	//처음에 아무것도 검색이 되지 않음 그렇기 때문에 default값을 넣어주어야함
 	private int selectPageNo=1;
 	private int rowCntPerPage=10;
 

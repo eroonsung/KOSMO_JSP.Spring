@@ -54,14 +54,16 @@
 			//입력한 키워드 얻어오기
 			//-----------------------------------------
 			var keyword1= $(".keyword1").val();
+			
 			//-----------------------------------------
 			//만약 키워드가 비어있거나 공백으로 구성되어 있으면 경고하고 비우고 함수 중단하기
 			//-----------------------------------------
 			if(keyword1==null||keyword1.split(" ").join("")==""){
-				alert("키워드가 비어있어 검색하지 않습니다.");
+				//alert("키워드가 비어있어 검색하지 않습니다.");
 				$(".keyword1").val("");
-				$(".keyword1").focus();
-				return;
+				//$(".keyword1").focus();
+				//return;
+				//=> 함수 중단하지 않고 DB연동 바로 하게 함
 			}
 			
 			//-----------------------------------------
@@ -105,6 +107,7 @@
 					$(".searchResult").html(
 						 $(responseHtml).find(".searchResult").html()
 						);
+					
 					//-----------------------------------------
 					//매개변수 responseHtml로 들어온 검색 결과물 html 소스 문자열에서
 					//class=boardListAllCnt를 가진 태그 내부의 [총 개수 문자열]을 얻어서
@@ -115,37 +118,84 @@
 					$(".boardListAllCnt").text(
 						 $(responseHtml).find(".boardListAllCnt").text()
 						);
+					
+					//-----------------------------------------
+					//매개변수 responseHtml로 들어온 검색 결과물 html 소스 문자열에서
+					//class=pageNo를 가진 태그 내부의 [검색 결과물 html 소스]를 얻어서
+					//아래 현 화면의 html 소스 중에 class=pageNo를 가진 태그 내부에 덮어씌우기
+					//-----------------------------------------
+					$(".pageNo").html($(responseHtml).find(".pageNo").html())
+					
 				}
 				,error: function(){
 					alert("서버 접속 실패");
 				}
 			});
 		}
+		
+		// **********************************************************
+		// 페이지 번호를 클릭하면 호출되는 함수 선언
+		// **********************************************************
+		function search_with_changePageNo( selectPageNo ){
+			$("[name=boardListForm]").find(".selectPageNo").val(selectPageNo);
+			search();
+		}
+
+		$(document).ready(function(){
+			$(".rowCntPerPage").change(function(){
+				$(".selectPageNo").val("1");
+				search();
+			})
+			
+			$(".boardSearch").click(function(){
+				search();
+			})
+			
+			$(".boardSearchAll").click(function(){
+				searchAll();
+			})
+		})
 	</script>
 
 </head>
 
-<body>
+<!-- 객체가 소유하고 있는 메소드를 호출할때는 무조건 대소문자 구분해서 적어줘야함!! keyCode -->
+<body onKeydown="if(event.keyCode==13){search();}">
 	<center>
-	
+		<!-- ******************************************** -->
+		<!-- 자바변수 선언하고 검색 화면 구현에 필요한 데이터 저장하기-->
+		<!-- ******************************************** -->
+		<%
+			List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
+			int boardListAllCnt = (Integer)request.getAttribute("boardListAllCnt");	
+		
+			int selectPageNo = (Integer)request.getAttribute("selectPageNo");
+			int last_pageNo = (Integer)request.getAttribute("last_pageNo");
+			int min_pageNo = (Integer)request.getAttribute("min_pageNo");
+			int max_pageNo = (Integer)request.getAttribute("max_pageNo");
+			
+			int start_serial_no = (Integer)request.getAttribute("start_serial_no");
+		
+		%>
 		<!-- ******************************************** -->
 		<!-- [게시판 검색 조건 입력 양식]을 내포한 form태그 선언
 		<!-- ******************************************** -->
-		<form name="boardListForm" method="post">
+		<form name="boardListForm" method="post" onSubmit="return false">
 			[키워드] : <input type="text" name="keyword1" class="keyword1">
 			<!-- <input type="text" name="keyword1" class="keyword1" onKeydown="if(event.keyCode==13){search();}"> -->
 			
 			<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">			
-			<select name="rowCntPerPage" class="rowCntPerPage" onChange="search();">
+			<select name="rowCntPerPage" class="rowCntPerPage">
 				<option value="10">10
 				<option value="15">15
 				<option value="20">20
 				<option value="25">25
 				<option value="30">30
+				<!-- <option value="<%=boardListAllCnt%>">모두 -->
 			</select>행 보기
 			
-			<input type="button" value=" 검색 " class="contactSearch" onClick="search();">&nbsp;
-			<input type="button" value="모두검색" class="contactSearchAll" onClick="searchAll();">&nbsp;
+			<input type="button" value=" 검색 " class="boardSearch" >&nbsp;
+			<input type="button" value="모두검색" class="boardSearchAll" >&nbsp;
 			
 			<!-- hidden 태그는 서버에 데이터를 보낼 때 사용함 -->
 			
@@ -153,15 +203,99 @@
 		</form>
 		<div style="height:5px"></div>
 		
-		<div class="boardListAllCnt">총 <%=(Integer)request.getAttribute("boardListAllCnt")%>개</div>
+				<!-- ============================================ -->
+		<!-- 페이지 번호 출력 -->
+		<!-- ============================================ -->
+		<div class="pageNo">
+		<%			
+			if(boardListAllCnt>0){
+				//방법 1 : 이전/다음 => 10 단위로 페이지가 달라짐
+				/*
+				out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo(1);'>[처음]</span> ");
+				
+				if(min_pageNo>1){
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(min_pageNo-1)+");'>[이전]</span> ");
+				}
+				
+				for(int i=min_pageNo; i<=max_pageNo; i++ ){
+					if(i==selectPageNo){
+						out.print("<span><b>"+i+"</b></span>&nbsp;&nbsp;");	
+					}else{
+						out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+i+");'>["+i+"]</span> ");
+					}
+							
+				}
+				
+				if(last_pageNo>max_pageNo){
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(max_pageNo+1)+");'>[다음]</span> ");
+				}
+				
+				out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+last_pageNo+");'>[끝]</span> ");
+				*/
+				
+				//방법 2 : 이전/다음 => 1단위로 페이지가 달라짐
+				/*
+				if(selectPageNo>1){
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo(1);'>[처음]</span> ");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(selectPageNo-1)+");'>[이전]</span> ");
+					out.print("&nbsp;&nbsp;");
+				}
+				
+				for(int i=min_pageNo; i<=max_pageNo; i++ ){
+					if(i==selectPageNo){
+						out.print("<span><b>"+i+"</b></span>&nbsp;&nbsp;");	
+					}else{
+						out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+i+");'>["+i+"]</span> ");
+					}			
+				}
+				if(selectPageNo<last_pageNo){
+					out.print("&nbsp;&nbsp;");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(selectPageNo+1)+");'>[다음]</span> ");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+last_pageNo+");'>[끝]</span> ");	
+				}
+				*/
+				//방법 3 : 처음/이전/다음/끝 다 보이되 클릭 막기
+				if(selectPageNo>1){
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo(1);'>[처음]</span> ");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(selectPageNo-1)+");'>[이전]</span> ");
+					out.print("&nbsp;&nbsp;");
+				}else{
+					out.print("<span>[처음]</span> ");
+					out.print("<span>[이전]</span> ");
+					out.print("&nbsp;&nbsp;");
+				}
+				
+				for(int i=min_pageNo; i<=max_pageNo; i++ ){
+					if(i==selectPageNo){
+						out.print("<span><b>"+i+"</b></span>&nbsp;&nbsp;");	
+					}else{
+						out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+i+");'>["+i+"]</span> ");
+					}			
+				}
+				if(selectPageNo<last_pageNo){
+					out.print("&nbsp;&nbsp;");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+(selectPageNo+1)+");'>[다음]</span> ");
+					out.print("<span style='cursor:pointer;' onClick='search_with_changePageNo("+last_pageNo+");'>[끝]</span> ");	
+				}else{
+					out.print("<span>[다음]</span> ");
+					out.print("<span>[끝]</span> ");
+					out.print("&nbsp;&nbsp;");
+				}
+			}
+		%>
+		</div>
+		
+		<div class="boardListAllCnt">총 <%=boardListAllCnt%>개</div>
 		
 		<div class="searchResult">
 			<table border=1>
 			<tr><th>번호<th>제목<th>작성자<th>조회수<th>등록일
 			<%
-				List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
 				if(boardList!=null){
-					int totCnt = boardList.size();
+					
+					int serialNo1 = start_serial_no; // 정순번호
+					int serialNo2 = boardListAllCnt-start_serial_no+1; // 역순번호
+					
 					for(int i=0; i<boardList.size(); i++){
 						
 						Map<String,String> map = boardList.get(i); // 한 행의 해시맵
@@ -184,8 +318,9 @@
 						}
 						if(print_level_int>0){xxx =xxx+"ㄴ";}
 						
-						out.println("<tr style='cursor:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"+(totCnt--)+"<td>"+xxx+subject
-								+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
+						out.println("<tr style='cursor:pointer;' onClick='goBoardContentForm("+b_no+")'><td>"
+						+(serialNo2--)+"<td>"+xxx+subject+"<td>"+writer+"<td>"+readcount+"<td>"+reg_date);
+						//serialNo1++
 					}	
 				}
 			%>
