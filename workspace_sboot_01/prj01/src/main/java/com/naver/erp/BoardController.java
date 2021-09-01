@@ -37,15 +37,30 @@ public class BoardController {
 	*/
 	@RequestMapping(value="boardList.do")
 	public ModelAndView goBoardList(BoardSerachDTO boardSearchDTO ) {
-		
-		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
-		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		BoardPageDTO boardPageDTO = new BoardPageDTO();
+		 Map<Object,Object> pageData = boardPageDTO.getPageData(boardSearchDTO, boardListAllCnt, 10);
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
 		mav.addObject("boardList",boardList);
 		mav.addObject("boardListAllCnt",boardListAllCnt);
+		
+		mav.addObject("selectPageNo", pageData.get("selectPageNo"));
+		mav.addObject("rowCntPerPage", pageData.get("rowCntPerPage"));
+		mav.addObject("min_pageNo", pageData.get("min_pageNo"));
+		mav.addObject("max_pageNo", pageData.get("max_pageNo"));
+		mav.addObject("last_pageNo", pageData.get("last_pageNo"));
+		mav.addObject("pageNoCntPerPage", pageData.get("pageNoCntPerPage"));
+		
+		mav.addObject("start_serial_no", pageData.get("start_serial_no"));
 		return mav;
 	}
 	//----------------------------------------------------------------------------
