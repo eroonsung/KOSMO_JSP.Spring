@@ -3,7 +3,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src="/resources/jquery-1.11.0.min.js"></script>
+
+<%@ include file="common.jsp" %>
+
 <script>
 	$(document).ready(function(){
 		$(".writer").val("사오정")
@@ -66,6 +68,7 @@
 
 <body>
 	<center>
+	<div class="logout"></div>
 		<!-- *************************************************** -->
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->

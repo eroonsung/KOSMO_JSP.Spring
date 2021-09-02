@@ -24,22 +24,35 @@ public class BoardController {
 	private BoardDAO boardDAO;
 	
 	//***********************************************
-	//가상 주소 /loginForm.do로 접근하면 호출되는 메소드 선언
+	//가상 주소 /boardList.do로 접근하면 호출되는 메소드 선언
 	//***********************************************
 	@RequestMapping(value="boardList.do")
 	public ModelAndView goBoardList(BoardSearchDTO boardSearchDTO) {
-		System.out.println("BoardController.goBoardList 메소드 시작");
-		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
-		System.out.println("BoardController.goBoardList 메소드 완료");
 		
 		System.out.println("BoardController.getBoardListAllCnt 메소드 시작");
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		System.out.println("BoardController.getBoardListAllCnt 메소드 완료");
 		
+		BoardPageDTO boardPageDTO = new BoardPageDTO();
+		Map<Object, Object> pageData = boardPageDTO.getPageData(boardSearchDTO, boardListAllCnt, 10);
+		
+		System.out.println("BoardController.goBoardList 메소드 시작");
+		List<Map<String,String>> boardList = this.boardDAO.getBoardList(boardSearchDTO);
+		System.out.println("BoardController.goBoardList 메소드 완료");
+		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
 		mav.addObject("boardList",boardList);
 		mav.addObject("boardListAllCnt",boardListAllCnt);
+		
+		mav.addObject("selectPageNo", pageData.get("selectPageNo"));
+		mav.addObject("rowCntPerPage", pageData.get("rowCntPerPage"));
+		mav.addObject("min_pageNo", pageData.get("min_pageNo"));
+		mav.addObject("max_pageNo", pageData.get("max_pageNo"));
+		mav.addObject("last_pageNo", pageData.get("last_pageNo"));
+		mav.addObject("pageNoCntPerPage", pageData.get("pageNoCntPerPage"));
+		
+		mav.addObject("start_serial_no", pageData.get("start_serial_no"));
 		return mav;
 	}
 	
