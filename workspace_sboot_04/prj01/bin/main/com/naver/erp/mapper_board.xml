@@ -14,7 +14,11 @@
     	<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기  -->
     	<!-- ================================================================= -->
     	<if test="keyword1!=null and keyword1.length()>0">
-    	and (
+    		and 
+    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+    		(
+    		</if>
+    		(
 	    	upper(subject) like upper('%${keyword1}%') 
 	    	or upper(content) like upper('%${keyword1}%') 
 	    	or upper(writer) like upper('%${keyword1}%') 
@@ -24,36 +28,35 @@
 	    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
 	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
 	    	)
-	    	
 	    	<if test="keyword2!=null and keyword2.length()>0">
-	    		<if test="andOr.equals('or')">or</if>
-	    		<if test="andOr.equals('and')">and</if>
-	    		(upper(subject) like upper('%${keyword2}%') 
-		    	or upper(content) like upper('%${keyword2}%') 
-		    	or upper(writer) like upper('%${keyword2}%') 
-		    	or upper(email) like upper('%${keyword2}%') 
-		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
-		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
-		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
-		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%')
-	    	
-	    	</if>
-	    </if>
-	    
-	   <if test="keyword2!=null and keyword2.length()>0">
-    	and (
-	    	upper(subject) like upper('%${keyword2}%') 
+    		<if test="andOr.equals('or')">or</if>
+    		<if test="andOr.equals('and')">and</if>
+    		(upper(subject) like upper('%${keyword2}%') 
 	    	or upper(content) like upper('%${keyword2}%') 
 	    	or upper(writer) like upper('%${keyword2}%') 
 	    	or upper(email) like upper('%${keyword2}%') 
 	    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
 	    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
 	    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
-	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%'
+	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%')
+	    	</if>
+    	</if>
+    	   
+	    <if test="keyword2!=null and keyword2.length()>0">
+    		and (
+				upper(subject) like upper('%${keyword2}%') 
+		    	or upper(content) like upper('%${keyword2}%') 
+		    	or upper(writer) like upper('%${keyword2}%') 
+		    	or upper(email) like upper('%${keyword2}%') 
+		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%'
 	    	)
-	    </if>
-	    
-
+    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+    		)
+    		</if>
+    	</if>
 	    
 	    
 		<!-- ================================================================= -->
