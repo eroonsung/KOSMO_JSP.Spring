@@ -11,4 +11,3 @@
 	})
 
 </script>
-<center><span></span></center>
