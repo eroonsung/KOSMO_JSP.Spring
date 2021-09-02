@@ -8,6 +8,11 @@
 <!-- UTF-8 인코딩방식을 가지고 있는 text중의 하나인 html 파일로 처리 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
+<!-- ******************************************** -->
+<!-- JSP 기술의 한 종류인 [Include Directive]를 이용하여
+	common.jsp 파일 내의 소스를 삽입하기 -->
+<!-- ******************************************** -->
+<%@include file="common.jsp" %>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -15,7 +20,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <head>
-	<script src="/resources/jquery-1.11.0.min.js"></script>
 	<script>
 		$(document).ready(function(){
 			$(".writer").val("사오정")
@@ -134,6 +138,7 @@
 
 <body>
 	<center>
+		<div class="logout"></div>
 		<!-- *************************************************** -->
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
@@ -185,6 +190,8 @@
 			<% }else{ %>
 				<input type="hidden" name="b_no" value="<%=request.getParameter("b_no")%>" >
 			<% } %>
+			
+			
 		</form>
 	</center>
 </body>

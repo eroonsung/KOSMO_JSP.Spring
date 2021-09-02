@@ -13,14 +13,17 @@
 <!-- ****************************************** -->
 <%@ page import = "com.naver.erp.BoardDTO" %>
 
-
+<!-- ******************************************** -->
+<!-- JSP 기술의 한 종류인 [Include Directive]를 이용하여
+	common.jsp 파일 내의 소스를 삽입하기 -->
+<!-- ******************************************** -->
+<%@include file="common.jsp" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <head>
-	<script src="/resources/jquery-1.11.0.min.js"></script>
 	<script>
 		$(document).ready(function(){
 	
@@ -65,6 +68,7 @@
 
 <body>
 	<center>
+
 		<% 
 			BoardDTO boardDTO = (BoardDTO)request.getAttribute("boardDTO");
 			int b_no =0;
@@ -78,6 +82,7 @@
 				String email = boardDTO.getEmail();
 		%>
 		<b>[글 상세 보기]</b>
+		
 		<table border=1>
 			<tr align=center>
 				<th bgcolor="lightgray">글번호</th>
@@ -109,7 +114,7 @@
 		<input type="button" value="댓글쓰기" onClick="goBoardRegForm();">&nbsp;
 		<input type="button" value="수정/삭제" onClick="goBoardUpDelForm();">&nbsp;
 		<input type="button" value="전체 글보기" onclick="location.replace('/boardList.do');">
-		
+		<div class="logout"></div>
 		<%
 			}else{
 				out.print("<script>alert('삭제된 글입니다.'); location.replace('/boardList.do')</script>");
@@ -130,6 +135,8 @@
 		<form name="boardRegForm" method="post" action="boardRegForm.do">
 			<input type="hidden" name="b_no" value="<%=b_no%>">
 		</form>
+		
+		
 	</center>
 </body>
 

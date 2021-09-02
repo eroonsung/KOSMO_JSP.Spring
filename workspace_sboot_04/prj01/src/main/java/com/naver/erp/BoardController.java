@@ -81,10 +81,10 @@ public class BoardController {
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
 			BoardSearchDTO boardSearchDTO
 		) {
-		
 		//----------------------------------------------------
 		//검색 조건에 맞는 모든 행의 개수
 		// 즉 [검색된 게시판 목록의 총 개수] 얻기
+		// 총 개수를 먼저 구해야함! 총 개수에 따라 페이징 처리 결과가 달라지기 때문
 		//----------------------------------------------------
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		
@@ -92,7 +92,10 @@ public class BoardController {
 		//----------------------------------------------------
 		//[마지막 페이지 번호]
 		//[현재 화면에 보여지는 페이지 번호의 최소 페이지 번호]
-		//[현재 화면에 보여지는 페이지 번호의 최대 페이지 번호] 얻기
+		//[현재 화면에 보여지는 페이지 번호의 최대 페이지 번호]
+		//BoardSearchDTO 객체에 저장된 [선택한 페이지 번호]
+		//BoardSearchDTO 객체에 저장된 [한화면에 보여줄 행의 개수]
+		//[한화면에 보여줄 페이지 번호의 개수] 구하기
 		//----------------------------------------------------
 		int last_pageNo = 0;
 		int min_pageNo = 0;
@@ -101,23 +104,32 @@ public class BoardController {
 		int rowCntPerPage = boardSearchDTO.getRowCntPerPage();
 		int pageNoCntPerPage = 10;
 		
+		//----------------------------------------------------
+		//만약 검색된 결과물의 개수가 0보다 크면 즉, 검색 결과물이 있으면
+		//----------------------------------------------------
 		if( boardListAllCnt>0 ) { // boardListAllCnt가 0이면 작동 안함
-			
+			// [마지막 페이지 번호] 구하기
 			last_pageNo = boardListAllCnt/rowCntPerPage;
 				if( boardListAllCnt%rowCntPerPage>0 ) { last_pageNo++; }
-				if(selectPageNo>last_pageNo) {
-					selectPageNo = 1;
-					boardSearchDTO.setSelectPageNo(selectPageNo);
-				}
+			//만약 선택한 페이지 번호가 마지막 페이지 번호보다 크면	
+			if(selectPageNo>last_pageNo) {
+				//변수에 1 저장하기
+				selectPageNo = 1;
+				//boardSearchDTO객체의 selectPageNo 속성변수에 1 저장하기
+					// -> 오라클 쪽으로 보내기 위해서
+				boardSearchDTO.setSelectPageNo(selectPageNo);
+			}
+			// [현재 화면에 보여지는 페이지 번호의 최소 페이지 번호] 구하기
 			min_pageNo = ((selectPageNo-1)/pageNoCntPerPage)*pageNoCntPerPage+1;
+			// [현재 화면에 보여지는 페이지 번호의 최대 페이지 번호] 구하기
 			max_pageNo =  min_pageNo+pageNoCntPerPage-1;
 				if( max_pageNo>last_pageNo ){
 					max_pageNo = last_pageNo ;
 				}
 		}
 		
-		
-		int start_serial_no = (selectPageNo-1)*rowCntPerPage+1;
+		//정순번호
+		int start_serial_no = (selectPageNo-1)*rowCntPerPage+1; 
 		
 		//System.out.println("BoardController.getBoardList 메소드 호출 시작");
 		//----------------------------------------------------
@@ -138,7 +150,6 @@ public class BoardController {
 		//[ModelAndView 객체]에 [선택한 페이지 번호]를 저장하기
 		//[ModelAndView 객체]에 [한 화면에 보여줄 행의 개수]를 저장하기
 		//[ModelAndView 객체]에 [한 화면에 보여줄 페이지의 개수]를 저장하기
-		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
@@ -156,6 +167,9 @@ public class BoardController {
 		mav.addObject("start_serial_no", start_serial_no);
 		
 		//System.out.println("BoardController.getBoardList 메소드 호출 완료");
+		//----------------------------------------------------
+		//[ModelAndView 객체] 리턴하기
+		//----------------------------------------------------
 		return mav;
 	}
 	

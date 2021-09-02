@@ -31,7 +31,7 @@ create table board(
 	,group_no   number(9)       not null         --> 게시판 글의 소속 그룹번호. 정렬 시 사용.
 	,print_no   number(9)       not null         --> 같은 그룹번호 내에서 화면 출력 순서 번호.정렬 시 사용.
 
-	,print_level number(9)      not null         -> 같은 그룹번호 내에서 댓글 들여쓰기 레벨 단계 번호. 부모 자식 관계를 알수 있다.
+	,print_level number(9)      not null         --> 같은 그룹번호 내에서 댓글 들여쓰기 레벨 단계 번호. 부모 자식 관계를 알수 있다.
 	
 	, primary key(b_no)
 );

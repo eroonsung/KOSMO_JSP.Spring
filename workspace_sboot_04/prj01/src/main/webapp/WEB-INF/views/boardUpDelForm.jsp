@@ -13,6 +13,11 @@
 <!-- ****************************************** -->
 <%@ page import = "com.naver.erp.BoardDTO" %>
 
+<!-- ******************************************** -->
+<!-- JSP 기술의 한 종류인 [Include Directive]를 이용하여
+	common.jsp 파일 내의 소스를 삽입하기 -->
+<!-- ******************************************** -->
+<%@include file="common.jsp" %>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -20,7 +25,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <head>
-	<script src="/resources/jquery-1.11.0.min.js"></script>
 	<script>
 		$(document).ready(function(){
 			
@@ -134,6 +138,7 @@
 
 <body>
 	<center>
+	<div class="logout"></div>
 	<%
 		BoardDTO boardDTO = (BoardDTO)request.getAttribute("boardDTO");
 		int b_no = 0;
