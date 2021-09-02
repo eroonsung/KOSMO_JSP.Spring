@@ -3,12 +3,14 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 
+<%@ include file="common.jsp" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script src="/resources/jquery-1.11.0.min.js"></script>
+
 <script>
 	function goBoardRegForm(){
 		location.replace("/boardRegForm.do");
@@ -72,13 +74,21 @@
 		})
 
 		$(".boardSearchAll").click(function(){
+			$(".dayList").prop("checked",false);
 			searchAll();
 		})
+		
+		$(".dayList").click(function(){
+			search();
+		})
+		
+		
 	})
 		
 </script>
 </head>
 <body onKeydown="if(event.keyCode==13){search();}">
+	<div class="logout"></div>
 	<center>
 	<%
 	List<Map<String,String>> boardList = (List<Map<String,String>>)request.getAttribute("boardList");
@@ -94,14 +104,20 @@
 	<form name="boardListForm" method="post" onSubmit="return false">
 		[키워드] : <input type="text" name="keyword1" class="keyword1">
 		
+		<input type="checkbox" name="dayList" class="dayList" value="그제">그제
+		<input type="checkbox" name="dayList" class="dayList" value="어제">어제
+		<input type="checkbox" name="dayList" class="dayList" value="오늘">오늘
+		<input type="checkbox" name="dayList" class="dayList" value="일주일내">일주일내
+		<div style="height:5px"></div>
+		
 		<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">
 		<select name="rowCntPerPage" class="rowCntPerPage">
 			<option value="10">10
 			<option value="15">15
-			<option value="20">20
+			<option value="20" selected>20
 			<option value="25">25
 			<option value="30">30
-		</select>
+		</select>행 보기
 		
 		<input type="button" value=" 검색 " class="boardSearch">
 		<input type="button" value="모두검색" class="boardSearchAll">

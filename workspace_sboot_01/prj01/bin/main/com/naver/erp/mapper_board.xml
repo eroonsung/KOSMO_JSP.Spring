@@ -16,6 +16,28 @@
 		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
     		)
    		</if>
+   		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+   		<if test="dayList!=null and dayList.size()>0">
+   			and
+   			<foreach collection="dayList" item="day" open="(" separator=" or " close=")">
+   				<if test="day.equals('그제')">
+   					to_char(reg_date,'YYYYMMDD') = to_char(sysdate-2, 'YYYYMMDD')
+   				</if>
+   				<if test="day.equals('어제')">
+   					to_char(reg_date,'YYYYMMDD') = to_char(sysdate-1, 'YYYYMMDD')
+   				</if>
+   				<if test="day.equals('오늘')">
+   					to_char(reg_date,'YYYYMMDD') = to_char(sysdate, 'YYYYMMDD')
+   				</if>   				
+   				<if test="day.equals('일주일내')">
+   					to_number(to_char(reg_date,'YYYYMMDD')) 
+   					between to_number(to_char(sysdate-6, 'YYYYMMDD')) and to_number(to_char(sysdate, 'YYYYMMDD'))
+   				</if>   			
+   			</foreach>
+   		
+   		</if>
+   		
+   		
 	</sql>
 
 	<!-- ======================================================================================= -->
