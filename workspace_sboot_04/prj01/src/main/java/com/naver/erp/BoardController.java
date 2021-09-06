@@ -3,9 +3,13 @@ package com.naver.erp;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,6 +44,49 @@ public class BoardController {
 	//==================================================
 	@Autowired
 	private BoardDAO boardDAO;
+	
+	
+	/*
+	//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	//@RequestMapping이 붙은 메소드가 호출되기 전에 호출되는 메소드 선언
+	//@ModelAttribute가 붙은 메소드는 @RequestMapping이 붙은 메소드가 호출되기 전에 호출되는 메소드이다.
+	//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	@ModelAttribute
+	public void checkLogin(
+			HttpSession session
+	) throws Exception { // 불났을때 벨 울리는 것과 똑같음
+		//메소드 내부에서 예외가 발생하면 이 메소드를 호출한 놈(프레임워크) 쪽으로
+		// 예외를 처리하도록 집어던짐
+		//----------------------------------------------------
+		//로그인 성공 여부를 확인하기
+		//----------------------------------------------------
+		//HttpSession 객체에 저장된 로그인 아이디를 꺼내기
+		String login_id = (String)session.getAttribute("login_id");
+		
+		// 만약 login_id 변수 안에 null이 저장되어 있으면
+		// 즉 만약 로그인에 성공한 적이 없으면
+		if(login_id==null) {
+			//코딩으로 일부러 예외 발생시키기
+			//예외를 관리하는 Exception 객체를 생성함으로써 예외가 발생한 것을 자바에게 알림
+			throw new Exception(); 
+		}
+	}
+	
+	
+	//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	//현재 이 [컨트롤러 클래스]내의 메소드에서 예외가 발생하면 호출되는 메소드 선언
+	// 예외가 발생하면 호출되는 메소드 선언
+	//의무적으로 @ExceptionHandler(Exception.class)를 붙여야한다.
+	//@ExceptionHandler(Exception.class)어노테이션이 붙은 메소드의
+	// 리턴되는 문자열은 호출 JSP 페이지명이다.
+	//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	@ExceptionHandler(Exception.class)
+	public String handleException() {
+		return "logout.jsp";
+	}
+	*/
+	
+	
 	
 	/*
 	//***********************************************
@@ -80,7 +127,25 @@ public class BoardController {
 			// 파라미터값을 저장하고 있는 BoardSearchDTO객체를 받아오는 매개변수 선언
 			//+++++++++++++++++++++++++++++++++++++++++++++++++
 			BoardSearchDTO boardSearchDTO
+			
+			//,HttpSession session
 		) {
+		/*
+		//----------------------------------------------------
+		//로그인 성공 여부를 확인하기
+		//----------------------------------------------------
+		//HttpSession 객체에 저장된 로그인 아이디를 꺼내기
+		String login_id = (String)session.getAttribute("login_id");
+		
+		// 만약 login_id 변수 안에 null이 저장되어 있으면
+		// 즉 만약 로그인에 성공한 적이 없으면
+		if(login_id==null) {
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("logout.jsp");
+			return mav;
+		}
+		*/
+		
 		//----------------------------------------------------
 		//검색 조건에 맞는 모든 행의 개수
 		// 즉 [검색된 게시판 목록의 총 개수] 얻기
@@ -153,6 +218,7 @@ public class BoardController {
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardList.jsp");
+		//mav.setViewName("boardList2.jsp");
 		mav.addObject("boardList", boardList);
 		mav.addObject("boardListAllCnt", boardListAllCnt);
 		
@@ -410,7 +476,7 @@ public class BoardController {
 	//***********************************************
 	//가상 주소 /boardUpDelForm.do로 접근하면 호출되는 메소드 선언
 	//***********************************************
-	@RequestMapping(value="/boardUpdelForm.do")
+	@RequestMapping(value="/boardUpDelForm.do")
 	public ModelAndView goBoardUpDelForm(
 			//----------------------------------------------------
 			//"b_no" 라는 파라미터명의 파라미터값이 저장되는 매개변수 b_no선언

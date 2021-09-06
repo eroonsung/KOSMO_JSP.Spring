@@ -124,7 +124,7 @@
 		<!-- ********************************************************** -->
 		<!-- [게시판 수정/삭제 화면]으로 이동하는 form태그 선언] -->
 		<!-- ********************************************************** -->
-		<form name="boardUpDelForm" method="post" action="/boardUpdelForm.do">
+		<form name="boardUpDelForm" method="post" action="/boardUpDelForm.do">
 			<input type="hidden" name="b_no" value="<%=b_no%>">
 			<!--<input type="text" name="b_no" value="<%=b_no%>">-->
 		</form>

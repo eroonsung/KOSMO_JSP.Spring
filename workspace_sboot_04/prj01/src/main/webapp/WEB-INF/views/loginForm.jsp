@@ -30,6 +30,8 @@
 					// 아이디와 암호의 유효성 체크하는 checkLoginForm()함수 호출하기
 					checkLoginForm();
 				})
+				$(".login_id").val("abc");
+				$(".pwd").val("123");
 			});
 
 			// **********************************************************
@@ -155,6 +157,14 @@
 				</table>
 			</form>
 		</center>
+		<!-- 테스트 용 -->
+		<!--  
+			<a href="localhost:8081/boardList.do">localhost:8081/boardList.do</a><br>
+			<a href="localhost:8081/boardRegForm">localhost:8081/boardRegForm</a><br>
+			<a href="localhost:8081/boardContentForm.do">localhost:8081/boardContentForm.do</a><br>
+			<a href="localhost:8081/boardUpDelForm.do">localhost:8081/boardUpDelForm.do</a><br> 
+		-->
+
 	</body>
 
 	</html>
