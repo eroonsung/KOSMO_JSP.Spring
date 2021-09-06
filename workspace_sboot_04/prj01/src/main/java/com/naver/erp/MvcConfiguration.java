@@ -28,9 +28,8 @@ public class MvcConfiguration implements WebMvcConfigurer{
 				,"/loginProc.do"
 				,"/loginProc2.do"
 				,"/logout.do"
-				,"/memRegForm.do"
-				,"/logout.do"
 				,"/login_alert.do"
+				,"/memRegForm.do"
 				,"/resources/**"
 		);
 	}

@@ -273,7 +273,14 @@
 					<span>[이전]</span> 
 				</c:if>
 				
-				
+				<c:forEach var="no" begin="${requestScope.min_pageNo}" end="${requestScope.max_pageNo}" step="1">
+					<c:if test="${no==requestScope.selectPageNo}">
+						<span><b>${no}</b></span>
+					</c:if>
+					<c:if test="${no!=requestScope.selectPageNo}">
+						<span style='cursor:pointer;' onClick='search_with_changePageNo(${no});'>[${no}]</span>
+					</c:if>
+				</c:forEach>
 				
 				<c:if test="${requestScope.selectPageNo<requestScope.last_pageNo}">
 					<span style='cursor:pointer;' onClick='search_with_changePageNo(${requestScope.selectPageNo+1});'>[다음]</span> 
