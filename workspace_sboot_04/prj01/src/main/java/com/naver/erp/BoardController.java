@@ -217,8 +217,8 @@ public class BoardController {
 		//[ModelAndView 객체]에 [한 화면에 보여줄 페이지의 개수]를 저장하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardList.jsp");
-		//mav.setViewName("boardList2.jsp");
+		//mav.setViewName("boardList.jsp");
+		mav.setViewName("boardList2.jsp");
 		mav.addObject("boardList", boardList);
 		mav.addObject("boardListAllCnt", boardListAllCnt);
 		
@@ -309,7 +309,8 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardRegForm.jsp");
+		//mav.setViewName("boardRegForm.jsp");
+		mav.setViewName("boardRegForm2.jsp");
 		return mav;
 	}
 	
@@ -348,7 +349,8 @@ public class BoardController {
 		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardRegProc.jsp");
+		//mav.setViewName("boardRegProc.jsp");
+		mav.setViewName("boardRegProc2.jsp");
 		//예외 처리
 		try { 
 			
@@ -466,7 +468,8 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardContentForm.jsp");
+		//mav.setViewName("boardContentForm.jsp");
+		mav.setViewName("boardContentForm2.jsp");
 		mav.addObject("b_no", b_no);
 		mav.addObject("boardDTO", boardDTO);
 		return mav;
@@ -502,7 +505,8 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardUpDelForm.jsp");
+		//mav.setViewName("boardUpDelForm.jsp");
+		mav.setViewName("boardUpDelForm2.jsp");
 		mav.addObject("boardDTO",boardDTO);
 		return mav;
 	}
@@ -533,7 +537,8 @@ public class BoardController {
 		//[ModelAndView 객체]에 [호출할 JSP 페이지명]을 저장하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardUpDelProc.jsp");
+		//mav.setViewName("boardUpDelProc.jsp");
+		mav.setViewName("boardUpDelProc2.jsp");
 		
 		//----------------------------------------------------
 		//만약 게시판 수정 모드면 => 유효성 검사 필요

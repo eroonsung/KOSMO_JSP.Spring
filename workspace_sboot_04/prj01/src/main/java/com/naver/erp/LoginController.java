@@ -133,7 +133,8 @@ public class LoginController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("loginProc.jsp");
+		//mav.setViewName("loginProc.jsp");
+		mav.setViewName("loginProc2.jsp");
 		// 아이디 암호의 존재 개수가 1이라고 가정함(DB연동의 결과물 저장)
 		//mav.addObject("idCnt", 1); // new Integer(1) //기본형 데이터가 기본형 관리 객체로 형변환(Autoboxing)
 		mav.addObject("idCnt", login_idCnt); // DB연동 결과물 저장

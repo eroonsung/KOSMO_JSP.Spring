@@ -251,6 +251,12 @@
   					<!-- <sql id="boardWhere">태그 안에 삽입된 SQL 구문 삽입하기  -->
   					<!-- ================================================================= -->
 					<include refid="boardWhere"/>
+					
+					<!-- ================================================================= -->
+  					<!-- 검색한 글의 같은 그룹 글까지 같이 보이게 함 -->
+  					<!-- ================================================================= -->
+					or group_no in(select group_no from board where 1=1 <include refid="boardWhere"/>)
+					
 		        order by 
 		        	group_no desc, print_no asc
 		                )zxcvb
@@ -282,6 +288,7 @@
 			<!-- <sql id="boardWhere">태그 안에 삽입된 SQL 구문 삽입하기  -->
 			<!-- ================================================================= -->
 			<include refid="boardWhere"/>
+			or group_no in(select group_no from board where 1=1 <include refid="boardWhere"/>)
 
 	</select>
 	
