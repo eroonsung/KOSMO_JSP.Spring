@@ -145,7 +145,7 @@
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
 		<form name="boardUpDelForm">
-			<table border=1 cellpadding=5 >
+			<table border=1 cellpadding=5 class="tbcss2">
 			<caption><b>게시판 수정/삭제</b></caption>
 				<tr>
 					<th bgcolor="lightgray">이름</th>

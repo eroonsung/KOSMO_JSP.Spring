@@ -8,12 +8,6 @@
 <!-- UTF-8 인코딩방식을 가지고 있는 text중의 하나인 html 파일로 처리 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<!-- ********************************************** -->
-<!-- 현재 JSP 페이지에서 사용할 클래스 수입하기 -->
-<!-- ********************************************** -->
-<%@ page import = "java.util.Map" %>
-<%@ page import = "java.util.List" %>
-
 <!-- ******************************************** -->
 <!-- JSP 기술의 한 종류인 [Include Directive]를 이용하여
 	common.jsp 파일 내의 소스를 삽입하기 -->
@@ -102,6 +96,7 @@
 			// 검색결과물을 응답받아 현 화면에 반영하기
 			//-----------------------------------------
 			searchExe();
+
 		}
 
 		// **********************************************************
@@ -161,6 +156,7 @@
 					//-----------------------------------------
 					$(".pageNo").html($(responseHtml).find(".pageNo").html())
 					
+					changeBgColor();
 				}
 				,error: function(){
 					alert("서버 접속 실패");
@@ -179,7 +175,14 @@
 			search();
 		}
 
+		// **********************************************************
+		// body태그 안의 내용을 모두 읽어들인 후 실행할 자스 코드 설정하기
+		// **********************************************************
 		$(document).ready(function(){
+
+			changeBgColor();
+			
+			
 			$(".rowCntPerPage").change(function(){
 				$(".selectPageNo").val("1");
 				search();
@@ -360,18 +363,17 @@
 		<!-- 검색 결과 출력하기 -->
 		<!-- ============================================ -->		
 		<div class="searchResult">
-			<table border=1 class="tbcss0" cellpadding="3">
+			<table border=1 class="tbcss0" cellpadding="3" width=500 >
 				<tr bgColor="gray">
 				<th>번호<th>제목<th>작성자<th>조회수<th>등록일
 				
 				<c:if test="${requestScope.boardList!=null}">
 				
 					<c:forEach var="board" items="${requestScope.boardList}" varStatus="loopTagStatus">
-						<tr 
-							bgColor="${loopTagStatus.index%2==0?'white':'lightgray'}" 
-							style="cursor:pointer;" onclick='goBoardContentForm(${board.b_no})'>
-							
-							<td> <!-- 역순번호 출력 -->
+						<%-- <tr bgColor="${loopTagStatus.index%2==0?'white':'lightgray'}" 
+							style="cursor:pointer;" onclick='goBoardContentForm(${board.b_no})' > --%>
+							<tr	style="cursor:pointer;" onclick='goBoardContentForm(${board.b_no})' >
+							<td align="center"> <!-- 역순번호 출력 -->
 							<!-- ${requestScope.boardListAllCnt-board.RNUM+1} -->
 							<!-- ${boardListAllCnt-requestScope.start_serial_no+1-loopTagStatus.index} -->
 							${boardListAllCnt-rowCntPerPage*(selectPageNo-1)-loopTagStatus.index}
@@ -381,7 +383,7 @@
 							<!--${rowCntPerPage*(selectPageNo-1)+1+loopTagStatus.index} -->
 							
 							
-							<td> <!-- ㄴ으로 표현되는 들여쓰기 -->
+							<td width="35%"> <!-- ㄴ으로 표현되는 들여쓰기 -->
 								<c:if test="${board.print_level>0}">
 									<c:forEach begin="1" end="${board.print_level}">
 										&nbsp&nbsp&nbsp&nbsp
@@ -390,9 +392,9 @@
 								</c:if>
 								${board.subject}
 								
-							<td> ${board.writer}
-							<td> ${board.readcount}
-							<td> ${board.reg_date}
+							<td align="center"> ${board.writer}
+							<td align="center"> ${board.readcount}
+							<td align="center"> ${board.reg_date}
 						</tr>
 					</c:forEach> 
 					

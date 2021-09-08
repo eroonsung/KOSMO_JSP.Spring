@@ -8,14 +8,21 @@
 <!-- UTF-8 인코딩방식을 가지고 있는 text중의 하나인 html 파일로 처리 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<%@include file="common.jsp" %>
 
 	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 	<head>
+		<!-- --------------------------------------------- -->
+		<!-- JQuery 라이브러리 수입하기 -->
+		<!-- --------------------------------------------- -->
 		<script src="/resources/jquery-1.11.0.min.js"></script>
+		
+		<!-- --------------------------------------------- -->
+		<!-- css 파일 수입하기 -->
+		<!-- --------------------------------------------- -->
+		<link href="/resources/common.css" rel="stylesheet" type="text/css" >
 		<script>
 
 			// **********************************************************
@@ -30,8 +37,8 @@
 					// 아이디와 암호의 유효성 체크하는 checkLoginForm()함수 호출하기
 					checkLoginForm();
 				})
-				$(".login_id").val("abc");
-				$(".pwd").val("123");
+				//$(".login_id").val("abc");
+				//$(".pwd").val("123");
 			});
 
 			// **********************************************************
@@ -71,7 +78,7 @@
 				$.ajax(
 					{
 						// 서버쪽 호출 URL 주소 지정
-						url: "/loginProc.do"
+						url: "/loginProc2.do"
 						// form 태그 안의 입력양식 데이터 즉, 파라미터값을 보내는 방법 지정 
 						, type: "post"
 						// 서버로 보낼 파라미터명과 파라미터값을 설정
@@ -130,40 +137,45 @@
 			<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 			<!-- *************************************************** -->
 			<form name="loginForm" method="post">
-				<table border=1 cellpadding=5>
+				<table border=1 cellpadding=5 class="tbcss2">
 					<caption><b>[로그인]</b></caption>
 					<tr>
 						<th bgcolor="lightgray" align=center>아이디</th>
 						<td>
-							<input type="text" name="login_id" class="login_id" size="20">
+							<input type="text" name="login_id" class="login_id" size="20" value="${cookie.login_id.value}">
 						</td>
 					</tr>
 					<tr>
 						<th bgcolor="lightgray" align=center>암호</th>
 						<td>
-							<input type="password" name="pwd" class="pwd" size="20">
+							<input type="password" name="pwd" class="pwd" size="20" value="${cookie.pwd.value}">
 						</td>
 					</tr>
 				</table>
 				<table cellpadding=3>
 					<tr align=center>
-						<td align=center><input type="button" value="로그인" class="login">
+						<td align=center>
+							<input type="button" value="로그인" class="login">
+							<input type="checkbox" name="is_login" value="yes" ${empty cookie.login_id.value?'':'checked'}>아이디/암호 기억
 					</tr>
 					<tr align=center>
 						<td>
-							<!-- <input type="checkbox" name="is_login" value="y"> 아이디,암호 기억 -->
 							<span style="cursor:pointer" onClick="location.replace('/memRegForm.do')">[회원가입]</span>
 					</tr>
 				</table>
 			</form>
 		</center>
 		<!-- 테스트 용 -->
-		<!--  
-			<a href="localhost:8081/boardList.do">localhost:8081/boardList.do</a><br>
-			<a href="localhost:8081/boardRegForm">localhost:8081/boardRegForm</a><br>
-			<a href="localhost:8081/boardContentForm.do">localhost:8081/boardContentForm.do</a><br>
-			<a href="localhost:8081/boardUpDelForm.do">localhost:8081/boardUpDelForm.do</a><br> 
-		-->
+			<span style="cursor:pointer" onClick="location.replace('/boardList.do')">localhost:8081/boardList.do</span><br>
+			<span style="cursor:pointer" onClick="location.replace('/boardRegForm.do')">localhost:8081/boardRegForm.do</span><br>
+			<span style="cursor:pointer" onClick="location.replace('/boardContentForm.do')">localhost:8081/boardContentForm.do</span><br>
+			<span style="cursor:pointer" onClick="location.replace('/boardUpDelForm.do')">localhost:8081/boardUpDelForm.do</span><br>
+			<!-- 
+				<a href="/boardList.do">localhost:8081/boardList.do</a><br>
+				<a href="/boardRegForm.do">localhost:8081/boardRegForm.do</a><br>
+				<a href="/boardContentForm.do">localhost:8081/boardContentForm.do</a><br>
+				<a href="/boardUpDelForm.do">localhost:8081/boardUpDelForm.do</a><br> 
+			 -->
 
 	</body>
 

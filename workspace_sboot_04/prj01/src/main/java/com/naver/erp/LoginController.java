@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -160,12 +162,22 @@ public class LoginController {
 			//----------------------------------------------------
 			, @RequestParam( value="pwd") String pwd
 			//----------------------------------------------------
+			//"is_login"라는 파라미터명에 해당하는 파라미터값을 꺼내서 매개변수 is_login에 저장하고 들어온다.
+			// required=false => 파라미터명, 값이 안들어와도 용서함
+			//----------------------------------------------------			
+			, @RequestParam( value="is_login", required=false ) String is_login
+			//----------------------------------------------------
 			// HttpSession 객체의 메위주를 저장하는 매개변수 session 선언하기
 			//----------------------------------------------------
 			, HttpSession session
+			//----------------------------------------------------
+			// HttpServletResponse 객체의 메위주를 저장하는 매개변수 response 선언하기
+			//----------------------------------------------------			
+			, HttpServletResponse response
 	) {
 		//----------------------------------------------------
 		//HashMap 객체 생성하기 => 아이디 암호를 하나의 박스에 저장
+		// 아이디 암호를 해시맵에 저장하는 이유 : 한곳에 집어넣어야 mapper에 전달할 수 있기 때문(단일화)
 		//HashMap 객체에 로그인 아이디 저장
 		//HashMap 객체에 로그인 암호 저장
 		//----------------------------------------------------
@@ -190,6 +202,57 @@ public class LoginController {
 			//<참고> HttpSession 객체는 접속한 이후에도 제거되지 않고 지정된 기간동안 살아있는 객체이다.
 			//<참고> HttpServletRequest, HttpServletResponse 객체는 접속할때 생성되고 응답 이후 삭제되는 객체
 			session.setAttribute("login_id", login_id);
+			
+			System.out.println("is_login=>"+is_login);
+			
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//매개변수 is_login에 null이 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 없을 경우)
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			if(is_login==null) {
+				//==============================================
+				//웹서버가 클라이언트가 가지고 있는 쿠키를 지울 수 없기 때문에(제거할 수 없기 때문에)
+				//  클라이언트가 가지고 있는 쿠키를 null값으로 덮어씌움
+				//	=> 마치 제거한 것과 같은 효과
+				//==============================================
+				// Coockie 객체를 생성하고 쿠키명-쿠키값을 [ "login_id"-null ]로 하기
+				Cookie cookie1 = new Cookie("login_id", null);
+				// Cookie 객체에 저장된 쿠키의 수명은 0으로 하기
+				cookie1.setMaxAge(0);
+				
+				// Coockie 객체를 생성하고 쿠키명-쿠키값을 [ "pwd"-null ]로 하기
+				Cookie cookie2 = new Cookie("pwd", null);
+				// Cookie 객체에 저장된 쿠키의 수명은 0으로 하기
+				cookie2.setMaxAge(0);
+				
+				//Cookie객체가 소유한 쿠키를 응답메시지에 저장하기
+				// 결국 Cookie 객체가 소유한 쿠키명-쿠키값이 응답메시지에 저장되는 것
+				// 응답메시지에 저장된 쿠키는 클라이언트 쪽으로 전송되어 클라이언트쪽에 저장된다.
+				response.addCookie(cookie1);
+				response.addCookie(cookie2);
+				
+			}
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//매개변수 is_login에 'yes'가 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 있을 경우)
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			else {
+				//==============================================
+				//클라이언트가 보낸 아이디, 암호를 응답메시지에 쿠키명과 쿠키값으로 저장하기
+				//하나의 쿠키객체에 하나의 쿠키명과 쿠키값을 저장함
+				//==============================================
+				//Cookie객체를 생성하고 쿠키명-쿠키값을 ["login_id"-"입력아이디"]로 하기
+				Cookie cookie1 = new Cookie("login_id", login_id);
+				//Cookie 객체에 저장된 쿠키의 수명은 60*60*24(하루)로 하기
+				cookie1.setMaxAge(60*60*24);
+				
+				//Cookie객체를 생성하고 쿠키명-쿠키값을 ["pwd"-"입력암호"]로 하기
+				Cookie cookie2 = new Cookie("pwd", pwd);
+				//Cookie 객체에 저장된 쿠키의 수명은 60*60*24(하루)로 하기
+				cookie2.setMaxAge(60*60*24);
+				
+				//Cookie객체가 소유한 쿠키를 응답메시지에 저장하기
+				response.addCookie(cookie1);
+				response.addCookie(cookie2);
+			}
 		}
 		
 		//----------------------------------------------------
@@ -200,13 +263,15 @@ public class LoginController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("loginProc.jsp");
+		//mav.setViewName("loginProc.jsp");
+		mav.setViewName("loginProc2.jsp");
 		// 아이디 암호의 존재 개수가 1이라고 가정함(DB연동의 결과물 저장)
 		//mav.addObject("idCnt", 1); // new Integer(1) //기본형 데이터가 기본형 관리 객체로 형변환(Autoboxing)
 		mav.addObject("idCnt", login_idCnt); // DB연동 결과물 저장
 			//위 addObject 메소드로 저장된 DB연동 결과물은 HttpServletRequest 객체에 setAttribute 메소드 호출로도 저장된다.
 		return mav;	
 	}	
+	
 	
 	//***********************************************
 	//가상 주소 /logout.do로 접근하면 호출되는 메소드 선언

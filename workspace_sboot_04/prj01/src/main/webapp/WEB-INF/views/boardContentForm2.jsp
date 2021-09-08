@@ -71,7 +71,7 @@
 		<b>[글 상세 보기]</b>
 		<%-- <c:if test="${boardDTO!=null}"> --%> 
 		<c:if test="${!empty requestScope.boardDTO}">
-			<table border=1 >
+			<table border=1 cellpadding=5 class="tbcss2" >
 				<tr align=center>
 					<th bgcolor="lightgray">글번호</th>
 					<td>${requestScope.boardDTO.b_no}</td> <!-- </%=b_no%> -->
