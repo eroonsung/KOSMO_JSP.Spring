@@ -5,6 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<link href="/resources/common.css" rel="stylesheet" type="text/css" >
 <script src="/resources/jquery-1.11.0.min.js"></script>
 <script>
 	$(document).ready(function(){
@@ -31,7 +32,7 @@
 		}
 
 		$.ajax({
-			url: "/loginProc.do"
+			url: "/loginProc2.do"
 			, type: "post"
 			, data: $("[name=loginForm]").serialize()
 			, success: function(responseHtml){
@@ -56,24 +57,26 @@
 <body>
 	<center>
 		<form name="loginForm" method="post">
-			<table border=1 cellpadding=5>
+			<table border=1 cellpadding=5 class="tbcss2">
 				<caption><b>[로그인]</b></caption>
 				<tr>
 					<th bgcolor="lightgray" align=center>아이디</th>
 					<td>
-						<input type="text" name="login_id" class="login_id" size="20">
+						<input type="text" name="login_id" class="login_id" size="20" value="${cookie.login_id.value}">
 					</td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray" align=center>암호</th>
 					<td>
-						<input type="password" name="pwd" class="pwd" size="20">
+						<input type="password" name="pwd" class="pwd" size="20" value="${cookie.pwd.value}">
 					</td>
 				</tr>
 			</table>
 			<table cellpadding=3>
 				<tr align=center>
-					<td align=center><input type="button" value="로그인" class="login">
+					<td align=center>
+						<input type="button" value="로그인" class="login">
+						<input type="checkbox" name="is_login" value="yes" ${empty cookie.login_id.value?'':'checked'}>아이디/암호기억
 				</tr>
 				<tr align=center>
 					<td>

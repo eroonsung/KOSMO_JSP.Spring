@@ -49,7 +49,8 @@ public class BoardController {
 		
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardList.jsp");
+		//mav.setViewName("boardList.jsp");
+		mav.setViewName("boardList2.jsp");
 		mav.addObject("boardList",boardList);
 		mav.addObject("boardListAllCnt",boardListAllCnt);
 		
@@ -77,7 +78,8 @@ public class BoardController {
 	public ModelAndView goBoardRegForm( @RequestParam(value="b_no", required=false, defaultValue="0") int b_no) {
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardRegForm.jsp");
+		//mav.setViewName("boardRegForm.jsp");
+		mav.setViewName("boardRegForm2.jsp");
 		return mav;
 	}
 	
@@ -86,7 +88,8 @@ public class BoardController {
 	public ModelAndView insertBoard(BoardDTO boardDTO, BindingResult bindingResult) {
 				
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardRegProc.jsp");
+		//mav.setViewName("boardRegProc.jsp");
+		mav.setViewName("boardRegProc2.jsp");
 		try {
 			String msg="";
 			msg = check_BoardDTO(boardDTO, bindingResult);
@@ -122,7 +125,8 @@ public class BoardController {
 		BoardDTO boardDTO = this.boardService.getBoard(b_no);
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardContentForm.jsp");
+		//mav.setViewName("boardContentForm.jsp");
+		mav.setViewName("boardContentForm2.jsp");
 		mav.addObject("boardDTO",boardDTO);
 		mav.addObject("b_no",b_no);
 		return mav;
@@ -134,7 +138,8 @@ public class BoardController {
 		BoardDTO boardDTO = this.boardService.getBoard(b_no);
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardUpDelForm.jsp");
+		//mav.setViewName("boardUpDelForm.jsp");
+		mav.setViewName("boardUpDelForm2.jsp");
 		mav.addObject("boardDTO",boardDTO);
 		return mav;
 	}
@@ -147,7 +152,8 @@ public class BoardController {
 		System.out.println("checkBoardUpDelForm 호출시작");
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardUpDelProc.jsp");
+		//mav.setViewName("boardUpDelProc.jsp");
+		mav.setViewName("boardUpDelProc2.jsp");
 		
 		if(upDel.equals("up")) {
 			String msg = "";
