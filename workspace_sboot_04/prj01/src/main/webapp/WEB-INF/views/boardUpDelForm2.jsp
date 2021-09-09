@@ -148,23 +148,23 @@
 			<table border=1 cellpadding=5 class="tbcss2">
 			<caption><b>게시판 수정/삭제</b></caption>
 				<tr>
-					<th bgcolor="lightgray">이름</th>
+					<th bgcolor="${thBgColor}">이름</th>
 					<td><input type="text" name="writer" class="writer" size="10" maxlength=10 value="${boardDTO.writer}"></td>
 				</tr>
 				<tr>
-					<th bgcolor="lightgray">제목</th>
+					<th bgcolor="${thBgColor}">제목</th>
 					<td><input type="text" name="subject" class="subject" size=40 maxlength="30" value="${boardDTO.subject}"></td>
 				</tr>
 				<tr>
-					<th bgcolor="lightgray">이메일</th>
+					<th bgcolor="${thBgColor}">이메일</th>
 					<td><input type="text" name="email" class="email" size=40 maxlength="30" value="${boardDTO.email}"></td>
 				</tr>
 				<tr>
-					<th bgcolor="lightgray">내용</th>
+					<th bgcolor="${thBgColor}">내용</th>
 					<td><textarea name="content" class="content" cols=50 rows=20>${boardDTO.content}</textarea></td>
 				</tr>
 				<tr>
-					<th bgcolor="lightgray">비밀번호</th>
+					<th bgcolor="${thBgColor}">비밀번호</th>
 					<td><input type="password" name="pwd" class="pwd" size=10 maxlength="4"></td>
 				</tr>
 			</table>

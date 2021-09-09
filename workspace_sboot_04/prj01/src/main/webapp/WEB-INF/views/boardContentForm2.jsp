@@ -73,27 +73,27 @@
 		<c:if test="${!empty requestScope.boardDTO}">
 			<table border=1 cellpadding=5 class="tbcss2" >
 				<tr align=center>
-					<th bgcolor="lightgray">글번호</th>
+					<th bgcolor="${requestScope.thBgColor}">글번호</th>
 					<td>${requestScope.boardDTO.b_no}</td> <!-- </%=b_no%> -->
-					<th bgcolor="lightgray">조회수</th>
+					<th bgcolor="${requestScope.thBgColor}">조회수</th>
 					<td>${requestScope.boardDTO.readcount}</td>
 				</tr>
 				<tr align=center>
-					<th bgcolor="lightgray">작성자</th>
+					<th bgcolor="${requestScope.thBgColor}">작성자</th>
 					<td>${requestScope.boardDTO.writer}</td>
-					<th bgcolor="lightgray">작성일</th>
+					<th bgcolor="${requestScope.thBgColor}">작성일</th>
 					<td>${requestScope.boardDTO.reg_date}</td>
 				</tr>
 				<tr align=center>
-					<th bgcolor="lightgray">이메일</th>
+					<th bgcolor="${requestScope.thBgColor}">이메일</th>
 					<td colspan=3>${requestScope.boardDTO.email}</td>
 				</tr>
 				<tr align=center>
-					<th bgcolor="lightgray">글제목</th>
+					<th bgcolor="${requestScope.thBgColor}">글제목</th>
 					<td colspan=3>${requestScope.boardDTO.subject}</td>
 				</tr>
 				<tr align=center>
-					<th bgcolor="lightgray">글내용</th>
+					<th bgcolor="${requestScope.thBgColor}">글내용</th>
 					<td colspan=3>
 						<textarea name="content" rows="13" cols="45" style="border:0" readonly>${requestScope.boardDTO.content}</textarea>
 					</td>

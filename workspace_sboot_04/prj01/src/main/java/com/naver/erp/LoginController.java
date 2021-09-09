@@ -214,6 +214,7 @@ public class LoginController {
 				//  클라이언트가 가지고 있는 쿠키를 null값으로 덮어씌움
 				//	=> 마치 제거한 것과 같은 효과
 				//==============================================
+				/*
 				// Coockie 객체를 생성하고 쿠키명-쿠키값을 [ "login_id"-null ]로 하기
 				Cookie cookie1 = new Cookie("login_id", null);
 				// Cookie 객체에 저장된 쿠키의 수명은 0으로 하기
@@ -229,7 +230,9 @@ public class LoginController {
 				// 응답메시지에 저장된 쿠키는 클라이언트 쪽으로 전송되어 클라이언트쪽에 저장된다.
 				response.addCookie(cookie1);
 				response.addCookie(cookie2);
-				
+				*/
+				Util.addCookie("login_id", null, 0, response);
+				Util.addCookie("pwd", null, 0, response);
 			}
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//매개변수 is_login에 'yes'가 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 있을 경우)
@@ -239,6 +242,7 @@ public class LoginController {
 				//클라이언트가 보낸 아이디, 암호를 응답메시지에 쿠키명과 쿠키값으로 저장하기
 				//하나의 쿠키객체에 하나의 쿠키명과 쿠키값을 저장함
 				//==============================================
+				/*
 				//Cookie객체를 생성하고 쿠키명-쿠키값을 ["login_id"-"입력아이디"]로 하기
 				Cookie cookie1 = new Cookie("login_id", login_id);
 				//Cookie 객체에 저장된 쿠키의 수명은 60*60*24(하루)로 하기
@@ -252,6 +256,9 @@ public class LoginController {
 				//Cookie객체가 소유한 쿠키를 응답메시지에 저장하기
 				response.addCookie(cookie1);
 				response.addCookie(cookie2);
+				*/
+				Util.addCookie("login_id", login_id, 60*60*24, response);
+				Util.addCookie("pwd", pwd, 60*60*24, response);
 			}
 		}
 		

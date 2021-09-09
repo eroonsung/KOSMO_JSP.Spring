@@ -43,6 +43,7 @@ public class BoardServiceImpl implements BoardService {
 		
 		//-------------------------------------------------
 		//BoardDAOImpl 객체의 insertBoard 메소드를 호출하여 게시판 글 입력 후 입력 적용 행의 개수 얻기
+		//만약 insertBoard가 실패하면 위의 updatePrintNo도 취소됨
 		//-------------------------------------------------
 		int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
 		

@@ -153,6 +153,8 @@ public class BoardController {
 		//----------------------------------------------------
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		
+
+		/*
 		//반복되는 코드(페이징처리하는 코드)=> 따로 클래스 생성가능
 		//----------------------------------------------------
 		//[마지막 페이지 번호]
@@ -196,6 +198,17 @@ public class BoardController {
 		//정순번호
 		int start_serial_no = (selectPageNo-1)*rowCntPerPage+1; 
 		
+		*/
+
+		int selectPageNo = boardSearchDTO.getSelectPageNo();
+		int rowCntPerPage = boardSearchDTO.getRowCntPerPage();
+		int pageNoCntPerPage = 10;
+		
+		Map<String,Integer> map= Util.getPagingNos(boardListAllCnt, pageNoCntPerPage, selectPageNo, rowCntPerPage);
+		
+		boardSearchDTO.setSelectPageNo(map.get("selectPageNo"));
+		
+		
 		//System.out.println("BoardController.getBoardList 메소드 호출 시작");
 		//----------------------------------------------------
 		//오라클 board테이블 안의 데이터(n행m열)를 검색해서 자바 객체에 저장하기	
@@ -218,10 +231,11 @@ public class BoardController {
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		//mav.setViewName("boardList.jsp");
-		mav.setViewName("boardList2.jsp");
+		mav.setViewName("boardList3.jsp");
 		mav.addObject("boardList", boardList);
 		mav.addObject("boardListAllCnt", boardListAllCnt);
 		
+		/*
 		mav.addObject("last_pageNo", last_pageNo);
 		mav.addObject("min_pageNo", min_pageNo);
 		mav.addObject("max_pageNo", max_pageNo);
@@ -231,6 +245,8 @@ public class BoardController {
 		mav.addObject("pageNoCntPerPage", pageNoCntPerPage);
 		
 		mav.addObject("start_serial_no", start_serial_no);
+		*/
+		mav.addObject("pagingNos",map );
 		
 		//System.out.println("BoardController.getBoardList 메소드 호출 완료");
 		//----------------------------------------------------

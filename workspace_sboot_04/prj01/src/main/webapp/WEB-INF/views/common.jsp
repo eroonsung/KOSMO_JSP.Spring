@@ -12,7 +12,8 @@
 <!-- ********************************************************************************** -->
 <!-- JSP 페이지에서 사용할 [사용자 정의 태그]의 한 종류인 [JSTL의 C코어 태그]를 사용하겠다고 선언 -->
 <!-- ********************************************************************************** -->
-<!-- 표현은 태그처럼 하되 기능은 Java -->
+	<!-- 표현은 태그처럼 하되 기능은 Java -->
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<!--
 		--------------------------------------
 		JSTL 이란?
@@ -27,8 +28,27 @@
 			=>JSTL 은 EL 과 같이 쓰인다.
 
 	-->
+	
+<!-- --------------------------------------------- -->
+<!-- 공용변수 만들기 -->
+<!-- --------------------------------------------- -->
+<%
+	//String thBgColor = "lightyellow";
+%>
 
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!-- --------------------------------------------- -->
+<!-- JSPL이라는 커스텀태그를 사용하여 HttpServletRequest 객체에 키값-데이터 저장하기 -->
+<!-- --------------------------------------------- -->
+<c:set var="thBgColor" value="lightblue" scope="request"/>
+
+	<%-- 
+		위 커스텀 태그와 동일한 기능을 가진 자바 코드
+		<% request.setAttribute("thBgColor","lightyellow"); %>
+	--%>  
+	
+<c:set var="bodyBgColor" value="#e7f3f3" scope="request"/>
+
+
 
 <!-- --------------------------------------------- -->
 <!-- 공용함수 수입하기 -->
@@ -47,11 +67,14 @@
 <!-- --------------------------------------------- -->
 <link href="/resources/common.css" rel="stylesheet" type="text/css" >
 
+
 <script>
 	$(document).ready(function(){
 		$(".logout").prepend(
 			"<center><div><span style='cursor:pointer' onclick='location.replace(\"/logout.do\");'>[로그아웃]</span></div></center>"	
 		);
+		
+		$("body").attr("bgcolor", "${bodyBgColor}")
 	});
 	
 	// **********************************************************
@@ -73,3 +96,6 @@
 		);
 	}
 </script>	
+
+
+

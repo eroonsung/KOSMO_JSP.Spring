@@ -8,21 +8,13 @@
 <!-- UTF-8 인코딩방식을 가지고 있는 text중의 하나인 html 파일로 처리 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-
+<%@include file="common.jsp" %>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 	<head>
-		<!-- --------------------------------------------- -->
-		<!-- JQuery 라이브러리 수입하기 -->
-		<!-- --------------------------------------------- -->
-		<script src="/resources/jquery-1.11.0.min.js"></script>
 		
-		<!-- --------------------------------------------- -->
-		<!-- css 파일 수입하기 -->
-		<!-- --------------------------------------------- -->
-		<link href="/resources/common.css" rel="stylesheet" type="text/css" >
 		<script>
 
 			// **********************************************************
@@ -140,13 +132,13 @@
 				<table border=1 cellpadding=5 class="tbcss2">
 					<caption><b>[로그인]</b></caption>
 					<tr>
-						<th bgcolor="lightgray" align=center>아이디</th>
+						<th bgcolor="${thBgColor}" align=center>아이디</th>
 						<td>
 							<input type="text" name="login_id" class="login_id" size="20" value="${cookie.login_id.value}">
 						</td>
 					</tr>
 					<tr>
-						<th bgcolor="lightgray" align=center>암호</th>
+						<th bgcolor="${thBgColor}" align=center>암호</th>
 						<td>
 							<input type="password" name="pwd" class="pwd" size="20" value="${cookie.pwd.value}">
 						</td>
