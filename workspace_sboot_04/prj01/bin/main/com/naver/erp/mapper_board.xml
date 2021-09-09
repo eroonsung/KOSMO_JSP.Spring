@@ -10,40 +10,95 @@
 	<!-- 게시판 글 목록을 구할때 사용할 where절을 sql태그 안에 선언하기 -->
 	<!-- ******************************************************* -->
 	<sql id="boardWhere">
-	    <!-- ================================================================= -->
-    	<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기  -->
-    	<!-- ================================================================= -->
-    	<if test="keyword1!=null and keyword1.length()>0">
-    		and 
-    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
-    		(
-    		</if>
-    		(
-	    	upper(subject) like upper('%${keyword1}%') 
-	    	or upper(content) like upper('%${keyword1}%') 
-	    	or upper(writer) like upper('%${keyword1}%') 
-	    	or upper(email) like upper('%${keyword1}%') 
-	    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
-	    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
-	    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
-	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
-	    	)
-	    	<if test="keyword2!=null and keyword2.length()>0">
-    		<if test="andOr.equals('or')">or</if>
-    		<if test="andOr.equals('and')">and</if>
-    		(upper(subject) like upper('%${keyword2}%') 
-	    	or upper(content) like upper('%${keyword2}%') 
-	    	or upper(writer) like upper('%${keyword2}%') 
-	    	or upper(email) like upper('%${keyword2}%') 
-	    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
-	    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
-	    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
-	    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%')
+    		<!-- 키워드 한 개 검색일 때 -->
+  			<!-- ================================================================= -->
+    		<!-- 만약 키워드가 null이 아니고 길이가 0보다 크면 where절에 참여하기  -->
+    		<!-- ================================================================= -->
+	    	<!-- 
+	    	
+	 			<if test="keyword1!=null and keyword1.length()>0">
+		    		and (
+			    		upper(subject) like upper('%${keyword1}%') 
+				    	or upper(content) like upper('%${keyword1}%') 
+				    	or upper(writer) like upper('%${keyword1}%') 
+				    	or upper(email) like upper('%${keyword1}%') 
+				    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+				    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+				    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+				    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+		    		)
+	   			</if>
+	    	 -->
+	    	 
+    		<!-- 쌍키워드 검색일 때 => 이현 -->	
+    		<!-- 
+	    	<if test="keyword1!=null and keyword1.length()>0">
+	    		and 
+	    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+	    		(
+	    		</if>
+	    		(
+		    	upper(subject) like upper('%${keyword1}%') 
+		    	or upper(content) like upper('%${keyword1}%') 
+		    	or upper(writer) like upper('%${keyword1}%') 
+		    	or upper(email) like upper('%${keyword1}%') 
+		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+		    	)
+		    	<if test="keyword2!=null and keyword2.length()>0">
+		    		<if test="andOr.equals('or')">or</if>
+		    		<if test="andOr.equals('and')">and</if>
+		    		(upper(subject) like upper('%${keyword2}%') 
+			    	or upper(content) like upper('%${keyword2}%') 
+			    	or upper(writer) like upper('%${keyword2}%') 
+			    	or upper(email) like upper('%${keyword2}%') 
+			    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%')
+		    	</if>
 	    	</if>
-    	</if>
-    	   
-	    <if test="keyword2!=null and keyword2.length()>0">
+	    	   
+		    <if test="keyword2!=null and keyword2.length()>0">
+	    		and (
+					upper(subject) like upper('%${keyword2}%') 
+			    	or upper(content) like upper('%${keyword2}%') 
+			    	or upper(writer) like upper('%${keyword2}%') 
+			    	or upper(email) like upper('%${keyword2}%') 
+			    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
+			    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%'
+		    	)
+	    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+	    		)
+	    		</if>
+	    	</if>
+	     -->
+	     
+	    <!-- 쌍키워드 검색일 때 => 수업 -->	
+   	 	<if test="keyword1!=null and keyword1.length()>0 or keyword2!=null and keyword2.length()>0">
     		and (
+		</if>
+		<if test="keyword1!=null and keyword1.length()>0">
+			(
+		    	upper(subject) like upper('%${keyword1}%') 
+		    	or upper(content) like upper('%${keyword1}%') 
+		    	or upper(writer) like upper('%${keyword1}%') 
+		    	or upper(email) like upper('%${keyword1}%') 
+		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+		    )
+		</if>
+		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+			${andOr}
+		</if>
+		<if test="keyword2!=null and keyword2.length()>0">
+			(
 				upper(subject) like upper('%${keyword2}%') 
 		    	or upper(content) like upper('%${keyword2}%') 
 		    	or upper(writer) like upper('%${keyword2}%') 
@@ -52,13 +107,12 @@
 		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
 		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
 		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%'
-	    	)
-    		<if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+		    )
+		</if>
+		<if test="keyword1!=null and keyword1.length()>0 or keyword2!=null and keyword2.length()>0">
     		)
-    		</if>
-    	</if>
-	    
-	    
+		</if>
+    
 		<!-- ================================================================= -->
     	<!-- 만약 BoardSearchDTO 객체의 속성변수 day가 null이 아니고 배열변수의 개수가 0보다 크면  -->
     	<!-- ================================================================= -->   
@@ -258,7 +312,28 @@
 					or group_no in(select group_no from board where 1=1 <include refid="boardWhere"/>)
 					
 		        order by 
-		        	group_no desc, print_no asc
+		        	<!-- ================================================================= -->
+  					<!-- sort가 null이거나 길이가 0이면 => 게시판 기존 sort를 기준으로 정렬 -->
+  					<!-- ================================================================= -->
+		        	<if test="sort==null or sort.length()==0">
+		        		group_no desc, print_no asc
+		        	</if>
+		        	<!-- ================================================================= -->
+  					<!-- sort가 null이 아니면서 길이가 0보다 크면 -->
+  					<!-- ================================================================= -->
+		        	<if test="sort!=null and sort.length()>0">
+		        		${sort}
+		        	</if>
+		        	
+		        	<!-- 출력물에 기본 정렬이 없을 경우
+			        	<if test="sort==null or sort.length()==0">
+			        		order by group_no desc, print_no asc
+			        	</if>
+			        	<if test="sort!=null and sort.length()>0">
+			        		order by ${sort}
+			        	</if>
+		        	
+		        	 -->
 		                )zxcvb
 		        <!-- 부등호를 태그의 시작으로 인식하기 때문에 <![CDATA[비교문 입력]]>을 사용함 -->
 		        <!-- CDATA: character data -->

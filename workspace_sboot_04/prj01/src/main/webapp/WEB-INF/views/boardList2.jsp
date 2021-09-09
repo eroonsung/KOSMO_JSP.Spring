@@ -80,7 +80,7 @@
 			if(keyword2==null||keyword2.split(" ").join("")==""){
 				//alert("키워드가 비어있어 검색하지 않습니다.");
 				keyword2= "";
-				//$(".keyword1").focus();
+				//$(".keyword2").focus();
 				//return;
 				//=> 함수 중단하지 않고 DB연동 바로 하게 함
 			}
@@ -108,6 +108,9 @@
 			//-----------------------------------------
 			$(".keyword1").val("");
 			$(".keyword2").val("");
+			// andOr는 항상 들어가기 때문에 ""로 풀지 말것!
+			
+			
 			//-----------------------------------------
 			//비동기 방식으로 웹서버에 접속하는 searchExe() 함수 호출하기
 			//-----------------------------------------
@@ -155,8 +158,31 @@
 					//아래 현 화면의 html 소스 중에 class=pageNo를 가진 태그 내부에 덮어씌우기
 					//-----------------------------------------
 					$(".pageNo").html($(responseHtml).find(".pageNo").html())
-					
+										
+					//-----------------------------------------
+					//changeBgColor() 함수 호출로 짝수행, 홀수행, 헤더에 배경색 주기
+					//-----------------------------------------
 					changeBgColor();
+					//-----------------------------------------
+					//reg_date_sort() 함수 호출로 등록일 클릭했을 때 발생하는 일 설정하기
+					//-----------------------------------------
+					reg_date_sort();
+					
+					//-----------------------------------------
+					//비동기방식으로 다시 불러온 페이지의 등록일 헤더 옆에 "▲","▼" 넣기
+					//-----------------------------------------
+					// class=sort를 가진 태그의 현재 value값 얻기
+					var sort= $(".sort").val();
+					
+					//만약에 class=sort를 가진 태그의 value값이 "reg_date asc"이면
+					//class=reg_date를 가진 태그의 내부 마지막에 ▲추가하기
+					if(sort=="reg_date asc"){
+						$(".reg_date").append("▲");
+					//만약에 class=sort를 가진 태그의 value값이 "reg_date desc"이면
+					//class=reg_date를 가진 태그의 내부 마지막에 ▼추가하기
+					}else if(sort=="reg_date desc"){
+						$(".reg_date").append("▼");
+					}
 				}
 				,error: function(){
 					alert("서버 접속 실패");
@@ -176,13 +202,49 @@
 		}
 
 		// **********************************************************
+		// 헤더 중에 등록일 문자열을 클릭했을 때 일어나는 일을 설정하는 함수 선언
+		// **********************************************************
+		function reg_date_sort(){
+			//-----------------------------------------
+			//class=reg_date를 가진 태그에 마우스를 대면 손모양 보이게 하기
+			//-----------------------------------------
+			$(".reg_date").css("cursor","pointer");
+			//-----------------------------------------
+			//class=reg_date를 가진 태그를 클릭하면 hidden 태그에 정렬 문자열 삽입하기
+			//-----------------------------------------
+			$(".reg_date").click(function(){
+				// JQuery에서 'this'는 선택자
+				// 클릭한 태그를 관리하는 JQuery 객체의 메위주 얻기
+				var thisObj = $(this);
+				// 클릭한 태그가 끌어안고 있는 문자열 얻기
+				var txt = thisObj.text();
+				// 문자열에서 앞 뒤 공백 제거하고 다시 얻기
+				txt= $.trim(txt);
+
+				//만약 문자열에 "▲"가 있으면 
+				if(txt.indexOf("▲")>=0){
+					//class=sort를 가진 태그에 value값으로 ""를 삽입하기
+					$(".sort").val("");
+				//만약 문자열에 "▼"가 있으면 	
+				}else if(txt.indexOf("▼")>=0){
+					//class=sort를 가진 태그에 value값으로 "reg_date asc"를 삽입하기
+					$(".sort").val("reg_date asc");
+				//만약 문자열에 "▲","▼"가 없으면 
+				//else if(txt.indexOf("▲")<0&&txt.indexOf("▼")<0)	
+				}else{
+					//class=sort를 가진 태그에 value값으로 "reg_date desc"를 삽입하기
+					$(".sort").val("reg_date desc");
+					
+				}
+				search();
+			})
+		}
+
+		// **********************************************************
 		// body태그 안의 내용을 모두 읽어들인 후 실행할 자스 코드 설정하기
 		// **********************************************************
 		$(document).ready(function(){
-
-			changeBgColor();
-			
-			
+						
 			$(".rowCntPerPage").change(function(){
 				$(".selectPageNo").val("1");
 				search();
@@ -200,6 +262,16 @@
 			$(".dayList").click(function(){
 				search();
 			})
+			
+			//-----------------------------------------
+			//changeBgColor() 함수 호출로 짝수행, 홀수행, 헤더에 배경색 주기
+			//-----------------------------------------
+			changeBgColor();
+			//-----------------------------------------
+			//reg_date_sort() 함수 호출로 등록일 클릭했을 때 발생하는 일 설정하기
+			//-----------------------------------------
+			reg_date_sort();
+
 		})
 	</script>
 
@@ -224,7 +296,7 @@
 			<!-- ---------------------------------------------- -->
 			[키워드] : <input type="text" name="keyword1" class="keyword1">
 			<select name="andOr">
-				<option value="or"> or
+				<option value="or"> or	
 				<option value="and"> and
 			</select>
 			<input type="text" name="keyword2" class="keyword2">
@@ -234,13 +306,45 @@
 			<input type="checkbox" name="dayList" class="dayList" value="어제">어제
 			<input type="checkbox" name="dayList" class="dayList" value="오늘">오늘
 			<input type="checkbox" name="dayList" class="dayList" value="일주일내">일주일내
-			<div style="height:10px"></div>
+			
+		
+
+			<div style="height:5px"></div>
+			<input type="button" value=" 검색 " class="boardSearch" >&nbsp;
+			<input type="button" value="모두검색" class="boardSearchAll" >&nbsp;
+			
+			<!-- hidden 태그는 서버에 데이터를 보낼 때 사용함 -->
+			
+			<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>	
+			
 			<!-- 검색화면에 필수적인 아주 중요한 웹서버로 보낼 데이터-->
 			<!-- 페이징 처리 관련 데이터 -->
 			<!-- ---------------------------------------------- -->
 			<!-- 클릭한 페이지번호를 저장할 hidden 입력양식 선언-->
 			<!-- ---------------------------------------------- -->
 			<input type="hidden" name="selectPageNo" class="selectPageNo" value="1">	
+			
+			<!-- ---------------------------------------------- -->
+			<!-- 정렬기준을 저장할 hidden 입력양식 선언-->
+			<!-- ---------------------------------------------- -->
+			<input type="hidden" name="sort" class="sort" value="">	
+		
+		<div style="height:10px"></div>
+		
+		
+		<!-- ============================================ -->
+		<!-- 검색된 목록의 총 개수 출력하기 -->
+		<!-- ============================================ -->
+		<!-- EL을 사용하여 HttpServletRequest 객체에 -->
+		<!-- setAttribute 메소드로 저장된 키값 "boardListAllCnt"로 저장된 데이터를 꺼내서 표현하기-->
+			<%-- ${requestScope.키값} --%>
+		<!-- EL : Expression Language -->
+		<!-- <참고> EL은 JSP 페이지에서 사용 가능한 언어 -->
+		<!-- 즉 EL은 JSP 기술의 한 종류 -->
+		
+		<!-- <div class="boardListAllCnt">총 <% // =boardListAllCnt%>개</div> -->
+		<!-- <div class="boardListAllCnt">총 ${requestScope.boardListAllCnt}개</div> -->
+		<span class="boardListAllCnt">총 ${boardListAllCnt}개</span>
 			<!-- ---------------------------------------------- -->
 			<!-- 한 화면에 보여줄 검색 결과물 행의 개수 관련 입력양식 선언 -->
 			<!-- ---------------------------------------------- -->
@@ -251,16 +355,7 @@
 				<option value="25">25
 				<option value="30">30
 			</select>행 보기
-			
-			<input type="button" value=" 검색 " class="boardSearch" >&nbsp;
-			<input type="button" value="모두검색" class="boardSearchAll" >&nbsp;
-			
-			<!-- hidden 태그는 서버에 데이터를 보낼 때 사용함 -->
-			
-			<a href = "javascript:goBoardRegForm();">[새글쓰기]</a>	
 		</form>
-		
-		<div style="height:10px"></div>
 		
 		<!-- ============================================ -->
 		<!-- 페이지 번호 출력 -->
@@ -346,26 +441,13 @@
 		<div style="height:10px"></div>
 		
 		<!-- ============================================ -->
-		<!-- 검색된 목록의 총 개수 출력하기 -->
-		<!-- ============================================ -->
-		<!-- EL을 사용하여 HttpServletRequest 객체에 -->
-		<!-- setAttribute 메소드로 저장된 키값 "boardListAllCnt"로 저장된 데이터를 꺼내서 표현하기-->
-			<%-- ${requestScope.키값} --%>
-		<!-- EL : Expression Language -->
-		<!-- <참고> EL은 JSP 페이지에서 사용 가능한 언어 -->
-		<!-- 즉 EL은 JSP 기술의 한 종류 -->
-		
-		<!-- <div class="boardListAllCnt">총 <% // =boardListAllCnt%>개</div> -->
-		<!-- <div class="boardListAllCnt">총 ${requestScope.boardListAllCnt}개</div> -->
-		<div class="boardListAllCnt">총 ${boardListAllCnt}개</div>
-
-		<!-- ============================================ -->
 		<!-- 검색 결과 출력하기 -->
 		<!-- ============================================ -->		
 		<div class="searchResult">
 			<table border=1 class="tbcss0" cellpadding="3" width=500 >
 				<tr bgColor="gray">
-				<th>번호<th>제목<th>작성자<th>조회수<th>등록일
+				<th>번호<th>제목<th>작성자<th>조회수
+					<th><span class="reg_date">등록일</span>
 				
 				<c:if test="${requestScope.boardList!=null}">
 				

@@ -203,7 +203,7 @@ public class LoginController {
 			//<참고> HttpServletRequest, HttpServletResponse 객체는 접속할때 생성되고 응답 이후 삭제되는 객체
 			session.setAttribute("login_id", login_id);
 			
-			System.out.println("is_login=>"+is_login);
+			//System.out.println("is_login=>"+is_login);
 			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//매개변수 is_login에 null이 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 없을 경우)

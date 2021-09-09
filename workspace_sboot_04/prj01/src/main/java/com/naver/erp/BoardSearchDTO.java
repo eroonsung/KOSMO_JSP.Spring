@@ -22,11 +22,12 @@ public class BoardSearchDTO {
 	private List<String> dayList;
 	//private String[] day;
 	
+	private String sort;
+
+	
 	//---------------------------------------------------
 	//getter, setter 메소드 선언
 	//---------------------------------------------------
-
-
 	public String getKeyword1() {
 		return keyword1;
 	}
@@ -73,6 +74,14 @@ public class BoardSearchDTO {
 
 	public void setDayList(List<String> dayList) {
 		this.dayList = dayList;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
 	}
 
 }
