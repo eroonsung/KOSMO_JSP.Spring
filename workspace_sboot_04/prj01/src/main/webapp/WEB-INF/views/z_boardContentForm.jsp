@@ -68,61 +68,72 @@
 
 <body>
 	<center>
+
+		<% 
+			BoardDTO boardDTO = (BoardDTO)request.getAttribute("boardDTO");
+			int b_no =0;
+			if(boardDTO!= null){
+				b_no = boardDTO.getB_no();
+				String subject = boardDTO.getSubject();
+				String writer = boardDTO.getWriter();
+				String content = boardDTO.getContent();
+				String reg_date = boardDTO.getReg_date();
+				int readcount = boardDTO.getReadcount();
+				String email = boardDTO.getEmail();
+		%>
 		<b>[글 상세 보기]</b>
-		<%-- <c:if test="${boardDTO!=null}"> --%> 
-		<c:if test="${!empty requestScope.boardDTO}">
-			<table border=1 cellpadding=5 class="tbcss2" >
-				<tr align=center>
-					<th bgcolor="${requestScope.thBgColor}">글번호</th>
-					<td>${requestScope.boardDTO.b_no}</td> <!-- </%=b_no%> -->
-					<th bgcolor="${requestScope.thBgColor}">조회수</th>
-					<td>${requestScope.boardDTO.readcount}</td>
-				</tr>
-				<tr align=center>
-					<th bgcolor="${requestScope.thBgColor}">작성자</th>
-					<td>${requestScope.boardDTO.writer}</td>
-					<th bgcolor="${requestScope.thBgColor}">작성일</th>
-					<td>${requestScope.boardDTO.reg_date}</td>
-				</tr>
-				<tr align=center>
-					<th bgcolor="${requestScope.thBgColor}">이메일</th>
-					<td colspan=3>${requestScope.boardDTO.email}</td>
-				</tr>
-				<tr align=center>
-					<th bgcolor="${requestScope.thBgColor}">글제목</th>
-					<td colspan=3>${requestScope.boardDTO.subject}</td>
-				</tr>
-				<tr align=center>
-					<th bgcolor="${requestScope.thBgColor}">글내용</th>
-					<td colspan=3>
-						<textarea name="content" rows="13" cols="45" style="border:0" readonly>${requestScope.boardDTO.content}</textarea>
-					</td>
-				</tr>
-			</table><br>
-			<input type="button" value="댓글쓰기" onClick="goBoardRegForm();">&nbsp;
-			<input type="button" value="수정/삭제" onClick="goBoardUpDelForm();">&nbsp;
-			<input type="button" value="전체 글보기" onclick="location.replace('/boardList.do');">
-			<div class="logout"></div>
-		</c:if>
 		
-		<%-- <c:if test="${boardDTO == null}"> --%>
-		<c:if test="${empty requestScope.boardDTO}">
-			<script>alert('삭제된 글입니다.'); location.replace('/boardList.do')</script>
-		</c:if>
+		<table border=1>
+			<tr align=center>
+				<th bgcolor="lightgray">글번호</th>
+				<td><% out.print(b_no); %></td> <!-- </%=b_no%> -->
+				<th bgcolor="lightgray">조회수</th>
+				<td><% out.print(readcount); %></td>
+			</tr>
+			<tr align=center>
+				<th bgcolor="lightgray">작성자</th>
+				<td><% out.print(writer); %></td>
+				<th bgcolor="lightgray">작성일</th>
+				<td><% out.print(reg_date); %></td>
+			</tr>
+			<tr align=center>
+				<th bgcolor="lightgray">이매일</th>
+				<td colspan=3><% out.print(email); %></td>
+			</tr>
+			<tr align=center>
+				<th bgcolor="lightgray">글제목</th>
+				<td colspan=3><% out.print(subject); %></td>
+			</tr>
+			<tr align=center>
+				<th bgcolor="lightgray">글내용</th>
+				<td colspan=3>
+					<textarea name="content" rows="13" cols="45" style="border:0" readonly><% out.print(content); %></textarea>
+				</td>
+			</tr>
+		</table><br>
+		<input type="button" value="댓글쓰기" onClick="goBoardRegForm();">&nbsp;
+		<input type="button" value="수정/삭제" onClick="goBoardUpDelForm();">&nbsp;
+		<input type="button" value="전체 글보기" onclick="location.replace('/boardList.do');">
+		<div class="logout"></div>
+		<%
+			}else{
+				out.print("<script>alert('삭제된 글입니다.'); location.replace('/boardList.do')</script>");
+			}
+		%>
 		
 		<!-- ********************************************************** -->
 		<!-- [게시판 수정/삭제 화면]으로 이동하는 form태그 선언] -->
 		<!-- ********************************************************** -->
 		<form name="boardUpDelForm" method="post" action="/boardUpDelForm.do">
-			<input type="hidden" name="b_no" value="${requestScope.boardDTO.b_no}">
-			<!--<input type="text" name="b_no" value="${boardDTO.b_no}">-->
+			<input type="hidden" name="b_no" value="<%=b_no%>">
+			<!--<input type="text" name="b_no" value="<%=b_no%>">-->
 		</form>
 		
 		<!-- ********************************************************** -->
 		<!-- [게시판 댓글쓰기 화면]으로 이동하는 form태그 선언] -->
 		<!-- ********************************************************** -->
 		<form name="boardRegForm" method="post" action="boardRegForm.do">
-			<input type="hidden" name="b_no" value="${requestScope.boardDTO.b_no}">
+			<input type="hidden" name="b_no" value="<%=b_no%>">
 		</form>
 		
 		

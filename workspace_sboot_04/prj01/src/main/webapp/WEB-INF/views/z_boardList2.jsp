@@ -372,73 +372,71 @@
 				</c:> 
 			********************************************************************
 			--%>
-			
-				<c:if test="${boardListAllCnt>0}">
-						<!------------------------------------------------>
-						<!--선택한 페이지 번호가 1보다 크면 [처음], [이전] 글씨 보이기. 단 클릭하면 함수 호출하도록 이벤트 걸기-->
+			<c:if test="${requestScope.boardListAllCnt>0}">
+					<!------------------------------------------------>
+					<!--선택한 페이지 번호가 1보다 크면 [처음], [이전] 글씨 보이기. 단 클릭하면 함수 호출하도록 이벤트 걸기-->
+					<!------------------------------------------------->
+					<c:if test="${requestScope.selectPageNo>1}">
+						<span style='cursor:pointer' onClick='search_with_changePageNo(1);'>[처음]</span>
+						<span style='cursor:pointer' onClick='search_with_changePageNo(${requestScope.selectPageNo}-1);'>[이전]</span>
+					</c:if>
+					<!------------------------------------------------>
+					<!-- 선택한 페이지 번호가 1면 [처음], [이전] 글씨 보이기. 단 클릭하면 함수 호출하는 이벤트 걸지 말기-->
+					<!------------------------------------------------->
+					<c:if test="${requestScope.selectPageNo<=1}">
+						<span>[처음]</span>
+						<span>[이전]</span>
+					</c:if>
+
+					<%--********************************************************************
+					JSTL 이란 커스텀 태그 중에 C코어 태그 중에 forEach 반복문을 사용하여
+					[최소 페이지번호] 부터 [최대 페이지 번호]를 표현하기
+					********************************************************************
+						----------------------------------------------------------------
+						C코어 태그 중에 forEach 반복문 형식1
+						----------------------------------------------------------------
+							<c:forEach var="반복문안에서사용할지역변수" begin="시작번호" end="끝번호" step="증감정수">
+								HTML 코딩
+							</c:forEach> 
+						----------------------------------------------------------------
+						C코어 태그 중에 forEach 반복문 형식2
+						----------------------------------------------------------------
+							<c:forEach var="반복문안에서사용할지역변수" items="EL로표현되는ArrayList객체" varStatus="LoopTagStatus객체저장변수명">
+								HTML 코딩
+							</c:forEach> 
+					********************************************************************--%>
+					<c:forEach  var="no"  begin="${requestScope.min_pageNo}"  end="${requestScope.max_pageNo}" step="1"> 
 						<!------------------------------------------------->
-						<c:if test="${pagingNos.selectPageNo>1}">
-							<span style='cursor:pointer' onClick='search_with_changePageNo(1);'>[처음]</span>
-							<span style='cursor:pointer' onClick='search_with_changePageNo(${pagingNos.selectPageNo}-1);'>[이전]</span>
-						</c:if>
-						<!------------------------------------------------>
-						<!-- 선택한 페이지 번호가 1면 [처음], [이전] 글씨 보이기. 단 클릭하면 함수 호출하는 이벤트 걸지 말기-->
+						<!-- 만약 출력되는 페이지번호와 선택한 페이지 번호가 일치하면 그냥 번호만 표현하기-->
 						<!------------------------------------------------->
-						<c:if test="${pagingNos.selectPageNo<=1}">
-							<span>[처음]</span>
-							<span>[이전]</span>
+						<c:if test="${no==requestScope.selectPageNo}">
+							<span><b>${no}</b></span>
 						</c:if>
-	
-						<%--********************************************************************
-						JSTL 이란 커스텀 태그 중에 C코어 태그 중에 forEach 반복문을 사용하여
-						[최소 페이지번호] 부터 [최대 페이지 번호]를 표현하기
-						********************************************************************
-							----------------------------------------------------------------
-							C코어 태그 중에 forEach 반복문 형식1
-							----------------------------------------------------------------
-								<c:forEach var="반복문안에서사용할지역변수" begin="시작번호" end="끝번호" step="증감정수">
-									HTML 코딩
-								</c:forEach> 
-							----------------------------------------------------------------
-							C코어 태그 중에 forEach 반복문 형식2
-							----------------------------------------------------------------
-								<c:forEach var="반복문안에서사용할지역변수" items="EL로표현되는ArrayList객체" varStatus="LoopTagStatus객체저장변수명">
-									HTML 코딩
-								</c:forEach> 
-						********************************************************************--%>
-						<c:forEach  var="no"  begin="${pagingNos.min_pageNo}"  end="${pagingNos.max_pageNo}" step="1"> 
-							<!------------------------------------------------->
-							<!-- 만약 출력되는 페이지번호와 선택한 페이지 번호가 일치하면 그냥 번호만 표현하기-->
-							<!------------------------------------------------->
-							<c:if test="${no==pagingNos.selectPageNo}">
-								<span><b>${no}</b></span>
-							</c:if>
-							<!------------------------------------------------->
-							<!-- 만약 출력되는 페이지번호와 선택한 페이지 번호가 일치하지 않으면 클릭하면 함수호출하도록 클릭 이벤트 걸기-->
-							<!------------------------------------------------->
-							<c:if test="${no!=pagingNos.selectPageNo}">
-								<span style='cursor:pointer' onClick='search_with_changePageNo(${no});'>[${no}]</span>
-							</c:if>
-						</c:forEach>
-	
-						<!----------------------------------------------->
-						<!-- 선택한 페이지 번호가 마지막 페이지 번호보다 작으면 [다음][마지막] 문자 표현하기-->
-						<!-- 단 클릭하면 함수 호출하도록 클릭 이벤트 걸기-->
 						<!------------------------------------------------->
-						<c:if test="${pagingNos.selectPageNo<pagingNos.last_pageNo}">
-							<span style='cursor:pointer' onClick='search_with_changePageNo(${pagingNos.selectPageNo}+1);'>[다음]</span>
-							<span style='cursor:pointer' onClick='search_with_changePageNo(${pagingNos.last_pageNo});'>[마지막]</span>
-						</c:if>
-						<!----------------------------------------------->
-						<!-- 선택한 페이지 번호가 마지막 페이지 번호보다 크거나 같으면 [다음][마지막] 문자만 표현하기-->
-						<!-- 단 클릭하면 함수 호출하는 이벤트는 걸지 않기-->
+						<!-- 만약 출력되는 페이지번호와 선택한 페이지 번호가 일치하지 않으면 클릭하면 함수호출하도록 클릭 이벤트 걸기-->
 						<!------------------------------------------------->
-						<c:if test="${pagingNos.selectPageNo>=pagingNos.last_pageNo}">
-							<span>[다음]</span>
-							<span>[마지막]</span> 
+						<c:if test="${no!=requestScope.selectPageNo}">
+							<span style='cursor:pointer' onClick='search_with_changePageNo(${no});'>[${no}]</span>
 						</c:if>
-				</c:if>
-		
+					</c:forEach>
+
+					<!----------------------------------------------->
+					<!-- 선택한 페이지 번호가 마지막 페이지 번호보다 작으면 [다음][마지막] 문자 표현하기-->
+					<!-- 단 클릭하면 함수 호출하도록 클릭 이벤트 걸기-->
+					<!------------------------------------------------->
+					<c:if test="${requestScope.selectPageNo<requestScope.last_pageNo}">
+						<span style='cursor:pointer' onClick='search_with_changePageNo(${requestScope.selectPageNo}+1);'>[다음]</span>
+						<span style='cursor:pointer' onClick='search_with_changePageNo(${requestScope.last_pageNo});'>[마지막]</span>
+					</c:if>
+					<!----------------------------------------------->
+					<!-- 선택한 페이지 번호가 마지막 페이지 번호보다 크거나 같으면 [다음][마지막] 문자만 표현하기-->
+					<!-- 단 클릭하면 함수 호출하는 이벤트는 걸지 않기-->
+					<!------------------------------------------------->
+					<c:if test="${requestScope.selectPageNo>=requestScope.last_pageNo}">
+						<span>[다음]</span>
+						<span>[마지막]</span> 
+					</c:if>
+			</c:if>
 		</div>
 		<div style="height:10px"></div>
 		
@@ -460,7 +458,7 @@
 							<td align="center"> <!-- 역순번호 출력 -->
 							<!-- ${requestScope.boardListAllCnt-board.RNUM+1} -->
 							<!-- ${boardListAllCnt-requestScope.start_serial_no+1-loopTagStatus.index} -->
-							${boardListAllCnt-pagingNos.rowCntPerPage*(pagingNos.selectPageNo-1)-loopTagStatus.index}
+							${boardListAllCnt-rowCntPerPage*(selectPageNo-1)-loopTagStatus.index}
 							
 							<!-- 정순번호 출력 -->
 							<!-- ${requestScope.start_serial_no+loopTagStatus.index} -->

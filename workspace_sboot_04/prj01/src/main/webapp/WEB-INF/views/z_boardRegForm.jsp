@@ -55,24 +55,36 @@
 				, data: $("[name=boardRegForm]").serialize()
 				//--------------------------------------------
 				// 서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정
-				// 익명함수의 매개변수에는 서버가 보내온 Map<String,String>을 JSON 객체로 바뀌어 들어온다.
+				// 익명함수의 매개변수에는 서버가 보내온 html 소스가 문자열로 들어온다
+				// 즉 응답 메시지 안의 html 소스가 문자열로써 익명함수의 매개변수로 들어온다.
+				// 응답 메시지 안의 html 소스는 boardRegProc.jsp의 실행 결과물이다.
 				//--------------------------------------------				
-				, success: function (json) {
-					//--------------------------------------------
-					//매개변수로 들어온 JSON 객체에서 게시판 입력 성공행의 개수를 꺼내서 지역변수 boardRegCnt에 저장하기
-					//매개변수로 들어온 JSON 객체에서 유효성 체크 결과 문자열을 지역변수 msg에 저장하기
-					//--------------------------------------------
-					var boardRegCnt = json.boardRegCnt;
-						boardRegCnt = parseInt(boardRegCnt,10);
-					var msg = json.msg;
+				, success: function (responseHtml) {
 
+					//--------------------------------------------	
+					//매개변수로 들어온 html 소스에서 class=msg를 가진 태그가 끌어안고 있는 문자 꺼내기
+					//즉 에러 메시지 꺼내기 
+					// 꺼낸 존재 개수의 앞 뒤 공백 제거하기
 					//--------------------------------------------
-					//만약 유효성 체크 결과 문자열이 있으면 경고하고 함수 중단하기
-					//--------------------------------------------
+					var msg = $(responseHtml).filter(".msg").text();
+					msg = $.trim(msg);
+
 					if(msg!=null && msg.length>0){
 						alert(msg);
 						return;
 					}
+					
+					//--------------------------------------------	
+					//매개변수로 들어온 html 소스에서 class=boardRegCnt를 가진 태그가 끌어안고 있는 숫자 꺼내기
+					//즉 게시판 글 입력 성공 행의 개수 꺼내기
+					// 꺼낸 존재 개수의 앞 뒤 공백 제거하기
+					//--------------------------------------------
+					//alert(responseHtml);
+					var boardRegCnt = $(responseHtml).filter(".boardRegCnt").text();
+					boardRegCnt = $.trim(boardRegCnt);
+					boardRegCnt = parseInt(boardRegCnt,10);
+
+					//방법1
 					var b_no = $("[name=boardRegForm] [name=b_no]").val();
 					//=================================================
 					//name=b_no의 value값이 0일 경우 (새글쓰기일 경우)
@@ -131,42 +143,35 @@
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
 		<form name="boardRegForm" method="post" action="/boardRegProc.do">
-			<table border=1 cellpadding=5 class="tbcss2">
-			<%-- 
-				<c:if test="${empty param.b_no}">
-					<caption><b>새글쓰기</b></caption>	
-				</c:if>
-				<c:if test="${!empty param.b_no}">
-					<caption><b>댓글쓰기</b></caption>
-				</c:if>
-			 --%>
-			 <c:choose>
-			 	<c:when test="${empty param.b_no}">
-			 		<caption><b>새글쓰기</b></caption>	
-			 	</c:when>
-			 	<c:otherwise>
-			 		<caption><b>댓글쓰기</b></caption>
-			 	</c:otherwise>
-			 </c:choose>
+			<table border=1 cellpadding=5>
+			
+			<!-- HttpServletRequset 객체의 b_no가 null이면 새글쓰기 -->
+			<% if(request.getParameter("b_no")==null){ %>
+			<caption><b>새글쓰기</b></caption>
+			
+			<!-- HttpServletRequset 객체의 b_no가 null이 아니면 댓글쓰기 -->
+			<% }else{ %>
+			<caption><b>댓글쓰기</b></caption>
+			<% } %>
 			
 				<tr>
-					<th bgcolor="${thBgColor}">이름</th>
+					<th bgcolor="lightgray">이름</th>
 					<td><input type="text" name="writer" class="writer" size="10" maxlength=10></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">제목</th>
+					<th bgcolor="lightgray">제목</th>
 					<td><input type="text" name="subject" class="subject" size=40 maxlength="30"></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">이메일</th>
+					<th bgcolor="lightgray">이메일</th>
 					<td><input type="text" name="email" class="email" size=40 maxlength="30"></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">내용</th>
+					<th bgcolor="lightgray">내용</th>
 					<td><textarea name="content" class="content" cols=50 rows=20></textarea></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">비밀번호</th>
+					<th bgcolor="lightgray">비밀번호</th>
 					<td><input type="password" name="pwd" class="pwd" size=10 maxlength="4"></td>
 				</tr>
 			</table>
@@ -175,12 +180,16 @@
 			<input type="reset" value="다시작성">
 			<input type="button" value="목록보기" onclick="location.replace('/boardList.do')">
 			
-			<c:if test="${empty param.b_no}">
+			<!-- 만약 파명 b_no의 파값이 null이면(새글쓰기)-->
+			<!-- name="b_no"를 가진 hidden 태그의 value에 0입력하기 -->
+			<% if(request.getParameter("b_no")==null){ %>
 				<input type="hidden" name="b_no" value="0" >
-			</c:if>
-			<c:if test="${!empty param.b_no}">
-				<input type="hidden" name="b_no" value="${param.b_no}" >
-			</c:if>
+				
+			<!-- 만약 파명 b_no의 파값이 null이 아니면(댓글쓰기)-->
+			<!-- name="b_no"를 가진 hidden 태그의 value에 현재 화면의 파값 입력하기 -->
+			<% }else{ %>
+				<input type="hidden" name="b_no" value="<%=request.getParameter("b_no")%>" >
+			<% } %>
 			
 			
 		</form>

@@ -27,8 +27,7 @@
 <head>
 	<script>
 		$(document).ready(function(){
-			//$(".writer").val("${requestScope.boardDTO.writer}");
-			//자스로 value값을 넣을 때 el로 꺼내온 값은 ""로 감싸야함
+			
 		})
 		// **********************************************************
 		// [게시판 등록 화면]에 입력된 데이터의 유효성 체크 함수 선언
@@ -75,16 +74,13 @@
 				// 즉 응답 메시지 안의 html 소스가 문자열로써 익명함수의 매개변수로 들어온다.
 				// 응답 메시지 안의 html 소스는 boardRegProc.jsp의 실행 결과물이다.
 				//--------------------------------------------				
-				, success: function (json) {
-					//-----------------------------------------
-					//JSON객체에서 유효성 체크 문자열 꺼내기
-					//JSON객체에서 수정/삭제 성공 행의 개수 꺼내기
-					//-----------------------------------------
-					var boardUpDelCnt = json.boardUpDelCnt;
-						boardUpDelCnt = parseInt(boardUpDelCnt,10);
+				, success: function (responseHtml) {
+					var msg = $(responseHtml).filter(".msg").text();
+					msg = $.trim(msg);
 					
-					var msg = json.msg;
-	
+					var boardUpDelCnt = $(responseHtml).filter(".boardUpDelCnt").text();
+					boardUpDelCnt = $.trim(boardUpDelCnt);
+					boardUpDelCnt = parseInt(boardUpDelCnt,10);
 					//====================================================
 					if(upDel=="up"){
 						if(msg!=""&& msg.length>0){
@@ -143,31 +139,42 @@
 <body>
 	<center>
 	<div class="logout"></div>
-		<c:if test="${!empty boardDTO}">
+	<%
+		BoardDTO boardDTO = (BoardDTO)request.getAttribute("boardDTO");
+		int b_no = 0;
+		if(boardDTO!= null){
+			b_no = boardDTO.getB_no();
+			String subject = boardDTO.getSubject();
+			String writer = boardDTO.getWriter();
+			String content = boardDTO.getContent();
+			String reg_date = boardDTO.getReg_date();
+			int readcount = boardDTO.getReadcount();
+			String email = boardDTO.getEmail();
+	%>
 		<!-- *************************************************** -->
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
 		<form name="boardUpDelForm">
-			<table border=1 cellpadding=5 class="tbcss2">
+			<table border=1 cellpadding=5>
 			<caption><b>게시판 수정/삭제</b></caption>
 				<tr>
-					<th bgcolor="${thBgColor}">이름</th>
-					<td><input type="text" name="writer" class="writer" size="10" maxlength=10 value="${boardDTO.writer}"></td>
+					<th bgcolor="lightgray">이름</th>
+					<td><input type="text" name="writer" class="writer" size="10" maxlength=10 value="<%=writer%>"></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">제목</th>
-					<td><input type="text" name="subject" class="subject" size=40 maxlength="30" value="${boardDTO.subject}"></td>
+					<th bgcolor="lightgray">제목</th>
+					<td><input type="text" name="subject" class="subject" size=40 maxlength="30" value="<%=subject%>"></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">이메일</th>
-					<td><input type="text" name="email" class="email" size=40 maxlength="30" value="${boardDTO.email}"></td>
+					<th bgcolor="lightgray">이메일</th>
+					<td><input type="text" name="email" class="email" size=40 maxlength="30" value="<%=email%>"></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">내용</th>
-					<td><textarea name="content" class="content" cols=50 rows=20>${boardDTO.content}</textarea></td>
+					<th bgcolor="lightgray">내용</th>
+					<td><textarea name="content" class="content" cols=50 rows=20><%=content%></textarea></td>
 				</tr>
 				<tr>
-					<th bgcolor="${thBgColor}">비밀번호</th>
+					<th bgcolor="lightgray">비밀번호</th>
 					<td><input type="password" name="pwd" class="pwd" size=10 maxlength="4"></td>
 				</tr>
 			</table>
@@ -179,16 +186,17 @@
 			<!-- *************************************************** -->
 			<!-- 어떤 게시글인지 확인하기 위해 b_no(PK값)을 가져옴 -->
 			<!-- *************************************************** -->
-			<input type="hidden" name="b_no" value="${boardDTO.b_no}">
+			<input type="hidden" name="b_no" value=<%=b_no%>>
 			<!-- *************************************************** -->
 			<!-- 수정인지 삭제인지 알 수 있는 태그 추가 -->
 			<!-- *************************************************** -->
 			<input type="hidden" name="upDel">
 		</form>
-		</c:if>
-		<c:if test="${empty boardDTO}">
-			<script>alert('삭제된 글입니다.'); location.replace('/boardList.do')</script>
-		</c:if>
+		<%
+			}else{
+				out.print("<script>alert('삭제된 글입니다.'); location.replace('/boardList.do')</script>");
+			}
+		%>
 	</center>
 </body>
 
