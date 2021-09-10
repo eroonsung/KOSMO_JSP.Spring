@@ -24,7 +24,7 @@
 		$.ajax({
 			url:"/boardRegProc.do"
 			, type: "post"
-			, data: $("[name=boardRegForm]").serialize()
+			, data: $("[name=boardRegForm]").serialize();
 			, success: function(responseHtml){
 				var msg = $(responseHtml).filter(".msg").text();
 				msg = $.trim(msg);

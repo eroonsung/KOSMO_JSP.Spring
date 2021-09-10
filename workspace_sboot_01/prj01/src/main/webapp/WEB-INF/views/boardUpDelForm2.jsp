@@ -30,6 +30,7 @@
 				url:"/boardUpDelProc.do"
 				, type: "post"
 				, data: $("[name=boardUpDelForm]").serialize()
+				/*
 				, success: function (responseHtml) {
 					var msg = $(responseHtml).filter(".msg").text();
 					msg = $.trim(msg);
@@ -64,6 +65,55 @@
 					else if(upDel=="del"){
 						if(boardUpDelCnt == 1){
 							alert("삭제성공");
+							location.replace("/boardList.do");
+						}else if(boardUpDelCnt == -1){
+							alert("게시판 글이 삭제되었습니다.");
+							location.replace("/boardList.do");
+						}else if(boardUpDelCnt == -2){
+							alert("암호가 틀립니다.");
+							$(".pwd").val("");
+						}else if(boardUpDelCnt == -3){
+							alert("댓글이 존재해 삭제가 불가능합니다.");
+						}else{
+							alert("서버 에러 발생! 관리자에게 문의 바람.");
+						}
+						
+					}
+				}
+				*/
+				, success: function (json) {
+					var boardUpDelCnt = json.boardUpDelCnt;
+						boardUpDelCnt = parseInt(boardUpDelCnt,10);
+					
+					var msg = json.msg;
+	
+					//====================================================
+					if(upDel=="up"){
+						if(msg!=""&& msg.length>0){
+							alert(msg);
+							return;
+						}
+						
+						if(boardUpDelCnt == -1){
+							alert("게시판 글이 삭제되었습니다.");
+							location.replace("/boardList.do");
+						}else if(boardUpDelCnt == -2){
+							alert("암호가 틀립니다.");
+							$(".pwd").val("");
+						}else if(boardUpDelCnt == 1){
+							if(confirm("수정 성공. 목록화면으로 이동하시겠습니까?")){
+								location.replace("/boardList.do");
+							}else{
+								return;
+							}
+						}else{
+							alert("서버 에러 발생! 관리자에게 문의 바람.");
+						}
+					}
+					//====================================================
+					else if(upDel=="del"){
+						if(boardUpDelCnt == 1){
+							alert("삭제성공.");
 							location.replace("/boardList.do");
 						}else if(boardUpDelCnt == -1){
 							alert("게시판 글이 삭제되었습니다.");

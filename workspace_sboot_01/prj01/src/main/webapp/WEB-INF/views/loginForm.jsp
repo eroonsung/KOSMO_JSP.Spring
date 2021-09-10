@@ -32,14 +32,25 @@
 		}
 
 		$.ajax({
-			url: "/loginProc2.do"
+			url: "/loginProc3.do"
 			, type: "post"
 			, data: $("[name=loginForm]").serialize()
+			/*
 			, success: function(responseHtml){
 				var idCnt = $(responseHtml).filter(".idCnt").text();
 				idCnt=$.trim(idCnt);
 				idCnt=parseInt(idCnt,10);
 				if(idCnt==1){
+					alert("로그인 성공");
+					location.replace("/boardList.do");
+					}
+				else{
+					alert("로그인 실패");
+					}
+				}
+			*/
+			, success: function(login_idCnt){
+				if(login_idCnt==1){
 					alert("로그인 성공");
 					location.replace("/boardList.do");
 					}

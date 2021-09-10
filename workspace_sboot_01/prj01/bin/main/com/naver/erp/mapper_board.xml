@@ -4,8 +4,25 @@
 <mapper namespace="com.naver.erp.BoardDAO">
 
 	<sql id="boardWhere">
-    	<if test="keyword1!=null and keyword1.length()>0">
-    		and (
+		<!-- 
+	    	<if test="keyword1!=null and keyword1.length()>0">
+	    		and (
+		    		upper(subject) like upper('%${keyword1}%') 
+			    	or upper(content) like upper('%${keyword1}%') 
+			    	or upper(writer) like upper('%${keyword1}%') 
+			    	or upper(email) like upper('%${keyword1}%') 
+			    	or to_char(reg_date,'YYYYMMDD') like '%${keyword1}%'
+			    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword1}%'
+			    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
+			    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
+	    		)
+	   		</if>
+   		 -->
+   		 <if test="keyword1!=null and keyword1.length()>0 or keyword2!=null and keyword2.length()>0">
+   		 	and (
+   		 </if>
+   		 <if test="keyword1!=null and keyword1.length()>0">
+   		 	(
 	    		upper(subject) like upper('%${keyword1}%') 
 		    	or upper(content) like upper('%${keyword1}%') 
 		    	or upper(writer) like upper('%${keyword1}%') 
@@ -15,14 +32,30 @@
 		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword1}%'
 		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword1}%'
     		)
-   		</if>
+   		 </if>
+   		 <if test="keyword1!=null and keyword1.length()>0 and keyword2!=null and keyword2.length()>0">
+   		 ${andOr}
+   		 </if>
+   		 <if test="keyword2!=null and keyword2.length()>0">
+   		 	(
+	    		upper(subject) like upper('%${keyword2}%') 
+		    	or upper(content) like upper('%${keyword2}%') 
+		    	or upper(writer) like upper('%${keyword2}%') 
+		    	or upper(email) like upper('%${keyword2}%') 
+		    	or to_char(reg_date,'YYYYMMDD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY-MM-DD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY.MM.DD') like '%${keyword2}%'
+		    	or to_char(reg_date,'YYYY/MM/DD') like '%${keyword2}%'
+    		)
+   		 </if>
+   		 <if test="keyword1!=null and keyword1.length()>0 or keyword2!=null and keyword2.length()>0">
+   		 	)
+   		 </if>
+   		
    		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
    		<if test="dayList!=null and dayList.size()>0">
    			and
    			<foreach collection="dayList" item="day" open="(" separator=" or " close=")">
-   				<if test="day.equals('그제')">
-   					to_char(reg_date,'YYYYMMDD') = to_char(sysdate-2, 'YYYYMMDD')
-   				</if>
    				<if test="day.equals('어제')">
    					to_char(reg_date,'YYYYMMDD') = to_char(sysdate-1, 'YYYYMMDD')
    				</if>
@@ -32,7 +65,11 @@
    				<if test="day.equals('일주일내')">
    					to_number(to_char(reg_date,'YYYYMMDD')) 
    					between to_number(to_char(sysdate-6, 'YYYYMMDD')) and to_number(to_char(sysdate, 'YYYYMMDD'))
-   				</if>   			
+   				</if> 
+    			<if test="day.equals('30일내')">
+   					to_number(to_char(reg_date,'YYYYMMDD')) 
+   					between to_number(to_char(sysdate-29, 'YYYYMMDD')) and to_number(to_char(sysdate, 'YYYYMMDD'))
+   				</if>    			
    			</foreach>
    		
    		</if>
@@ -69,7 +106,17 @@
 					where
 			    		1=1 
 						<include refid="boardWhere"/>
-					order by group_no desc, print_no asc
+						<!-- ================================================================= -->
+						<!-- 검색한 글의 같은 그룹 글까지 같이 보이게 함 -->
+						<!-- ================================================================= -->
+						or group_no in(select group_no from board where 1=1 <include refid="boardWhere"/>)						
+					order by 
+					<if test="sort==null or sort.length()==0">
+						group_no desc, print_no asc
+					</if>
+					<if test="sort!=null and sort.length()>0">
+						${sort}
+					</if>
 				)zxcvb
 				<![CDATA[
 				where rownum<= ${selectPageNo*rowCntPerPage})
@@ -83,6 +130,11 @@
 		where
     		1=1 
 			<include refid="boardWhere"/>
+			<!-- ================================================================= -->
+			<!-- 검색한 글의 같은 그룹 글까지 같이 보이게 함 -->
+			<!-- ================================================================= -->
+			or group_no in(select group_no from board where 1=1 <include refid="boardWhere"/>)						
+			
 	</select> 
 	
 	<!-- ======================================================================================= -->

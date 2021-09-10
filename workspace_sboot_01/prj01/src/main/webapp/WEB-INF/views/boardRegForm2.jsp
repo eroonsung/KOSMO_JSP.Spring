@@ -25,6 +25,7 @@
 			url:"/boardRegProc.do"
 			, type: "post"
 			, data: $("[name=boardRegForm]").serialize()
+			/*
 			, success: function(responseHtml){
 				var msg = $(responseHtml).filter(".msg").text();
 				msg = $.trim(msg);
@@ -51,6 +52,35 @@
 						alert("댓글쓰기 성공");
 						location.replace("boardList.do");					
 					}else{
+						alert("댓글쓰기 실패");
+					}
+				}
+			}
+			*/
+			, success: function (json) {
+				var msg = json.msg;
+				var boardRegCnt = json.boardRegCnt;
+					boardRegCnt = parseInt(boardRegCnt,10);
+				
+				if(msg!=null && msg.length>0){
+					alert(msg);
+					return;
+				}
+				var b_no = $("[name=boardRegForm] [name=b_no]").val();
+				if(b_no=="0"){
+					if(boardRegCnt==1){
+						alert("새글쓰기 성공");
+						location.replace("/boardList.do");
+					}
+					else{
+						alert("새글쓰기 실패");
+					}
+				}else{
+					if(boardRegCnt==1){
+						alert("댓글쓰기 성공");
+						location.replace("/boardList.do");
+					}
+					else{
 						alert("댓글쓰기 실패");
 					}
 				}

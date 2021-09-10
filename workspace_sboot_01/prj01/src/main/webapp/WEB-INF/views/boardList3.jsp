@@ -163,29 +163,29 @@
 		
 		<div class="pageNo">
 			<c:if test="${requestScope.boardListAllCnt>0}">
-				<c:if test="${requestScope.selectPageNo>1}">
+				<c:if test="${pagingNos.selectPageNo>1}">
 					<span style='cursor:pointer;' onClick='search_with_changePageNo(1);'>[처음]</span> 
-					<span style='cursor:pointer;' onClick='search_with_changePageNo(${requestScope.selectPageNo-1});'>[이전]</span>
+					<span style='cursor:pointer;' onClick='search_with_changePageNo(${pagingNos.selectPageNo-1});'>[이전]</span>
 				</c:if>
-				<c:if test="${requestScope.selectPageNo<=1}">
+				<c:if test="${pagingNos.selectPageNo<=1}">
 					<span>[처음]</span> 
 					<span>[이전]</span> 
 				</c:if>
 				
-				<c:forEach var="no" begin="${requestScope.min_pageNo}" end="${requestScope.max_pageNo}" step="1">
-					<c:if test="${no==requestScope.selectPageNo}">
+				<c:forEach var="no" begin="${pagingNos.min_pageNo}" end="${pagingNos.max_pageNo}" step="1">
+					<c:if test="${no==pagingNos.selectPageNo}">
 						<span><b>${no}</b></span>
 					</c:if>
-					<c:if test="${no!=requestScope.selectPageNo}">
+					<c:if test="${no!=pagingNos.selectPageNo}">
 						<span style='cursor:pointer;' onClick='search_with_changePageNo(${no});'>[${no}]</span>
 					</c:if>
 				</c:forEach>
 				
-				<c:if test="${requestScope.selectPageNo<requestScope.last_pageNo}">
-					<span style='cursor:pointer;' onClick='search_with_changePageNo(${requestScope.selectPageNo+1});'>[다음]</span> 
-					<span style='cursor:pointer;' onClick='search_with_changePageNo(${requestScope.last_pageNo});'>[끝]</span>
+				<c:if test="${pagingNos.selectPageNo<pagingNos.last_pageNo}">
+					<span style='cursor:pointer;' onClick='search_with_changePageNo(${pagingNos.selectPageNo+1});'>[다음]</span> 
+					<span style='cursor:pointer;' onClick='search_with_changePageNo(${pagingNos.last_pageNo});'>[끝]</span>
 				</c:if>
-				<c:if test="${requestScope.selectPageNo>=requestScope.last_pageNo}">
+				<c:if test="${pagingNos.selectPageNo>=pagingNos.last_pageNo}">
 					<span>[다음]</span> 
 					<span>[끝]</span> 
 				</c:if>
@@ -202,7 +202,7 @@
 			<c:if test="${requestScope.boardList!=null}">
 				<c:forEach var="board" items="${requestScope.boardList}" varStatus="loopTagStatus">
 					<tr style='cursor:pointer;' onClick='goBoardContentForm(${board.b_no})'> 
-					<td>${boardListAllCnt-rowCntPerPage*(selectPageNo-1)-loopTagStatus.index}
+					<td>${boardListAllCnt-pagingNos.rowCntPerPage*(pagingNos.selectPageNo-1)-loopTagStatus.index}
 					<%-- ${requestScope.start_serial_no+loopTagStatus.index} --%>
 					<td>
 					<c:if test="${board.print_level>0}">
