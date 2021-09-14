@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MvcConfiguration implements WebMvcConfigurer{
 	//xml 파일에서 설정해야 할 것(레거시 프로젝트)들을 자바 클래스 내에서 설정함
-	
+		
 	//***********************************************
 	// SessionInterceptor 객체를 인터셉터로 등록하는 코딩이 내포된 
 	// addInterceptors 메서드를 오버라이딩한다
@@ -24,12 +24,15 @@ public class MvcConfiguration implements WebMvcConfigurer{
 		//		SessionInterceptor객체가 먼저 가로채도록 함
 		//---------------------------------------------------
 		registry.addInterceptor(new SessionInterceptor()).excludePathPatterns(
-				"/loginForm.do"
-				,"/loginProc.do"
-				,"/logout.do"
-				,"/login_alert.do"
-				,"/memRegForm.do"
-				,"/memRegProc.do"
+				
+				"/naver/loginForm.do"
+				,"/naver/loginForm.do"
+				,"/naver/loginProc.do"
+				,"/naver/loginProc.do"
+				,"/naver/logout.do"
+				,"/naver/login_alert.do"
+				,"/naver/memRegForm.do"
+				,"/naver/memRegProc.do"
 				,"/resources/**"
 		);
 	}

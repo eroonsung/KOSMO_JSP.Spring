@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 	//게시판에 관련된 URL 주소를 맞이할 메소드 관리
 
 @Controller
+@RequestMapping(value="/naver")
 public class BoardController {
 	
 	//==================================================
@@ -50,6 +51,7 @@ public class BoardController {
 	@Autowired
 	private BoardDAO boardDAO;
 	
+	private String path = Info.naverPath;
 
 	//***********************************************
 	//가상 주소 /boardList.do로 접근하면 호출되는 메소드 선언
@@ -158,7 +160,7 @@ public class BoardController {
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		//mav.setViewName("boardList.jsp");
-		mav.setViewName("boardList.jsp");
+		mav.setViewName(path+"boardList.jsp");
 		mav.addObject("boardList", boardList);
 		mav.addObject("boardListAllCnt", boardListAllCnt);
 		
@@ -240,7 +242,7 @@ public class BoardController {
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		//mav.setViewName("boardList.jsp");
-		mav.setViewName("boardList.jsp");
+		mav.setViewName(path+"boardList.jsp");
 		mav.addObject("boardList", boardList);
 		mav.addObject("boardListAllCnt", boardListAllCnt);
 		
@@ -295,7 +297,7 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardRegForm.jsp");
+		mav.setViewName(path+"boardRegForm.jsp");
 		return mav;
 	}
 	
@@ -479,7 +481,7 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardContentForm.jsp");
+		mav.setViewName(path+"boardContentForm.jsp");
 		
 		mav.addObject("b_no", b_no);
 		mav.addObject("boardDTO", boardDTO);
@@ -516,7 +518,7 @@ public class BoardController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("boardUpDelForm.jsp");
+		mav.setViewName(path+"boardUpDelForm.jsp");
 		mav.addObject("boardDTO",boardDTO);
 		return mav;
 	}

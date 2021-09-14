@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	//로그인에 관련된 URL 주소를 맞이할 메소드 관리
 @Controller
+@RequestMapping(value="/naver")
 public class LoginController {
 	
 	//==================================================
@@ -49,6 +50,10 @@ public class LoginController {
 	private LoginDAO loginDAO; 
 		// 속성변수의 역할 : 클래스를 구성하는 동료 속성변수나 동료 메소드가 공용으로 사용할 수 있음
 		
+
+	private String path = Info.naverPath;
+	
+	
 	
 	//***********************************************
 	//가상 주소 /loginForm.do로 접근하면 호출되는 메소드 선언
@@ -68,7 +73,7 @@ public class LoginController {
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
 		// /WEB-INF/views/loginForm.jsp
-		mav.setViewName("loginForm.jsp");
+		mav.setViewName(path+"loginForm.jsp");
 		return mav;
 			// ModelAndView객체의 메모리 위치 주소 리턴
 	};
@@ -184,7 +189,7 @@ public class LoginController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("logout.jsp");
+		mav.setViewName(path+"logout.jsp");
 		return mav;	
 	}
 	
@@ -200,7 +205,7 @@ public class LoginController {
 		//[ModelAndView 객체] 리턴하기
 		//----------------------------------------------------
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("login_alert.jsp");
+		mav.setViewName(path+"login_alert.jsp");
 		return mav;	
 	}
 }

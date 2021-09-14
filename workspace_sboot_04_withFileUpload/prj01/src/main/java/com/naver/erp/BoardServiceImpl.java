@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +33,21 @@ public class BoardServiceImpl implements BoardService {
 	//	<주의> 경로가 문자열이므로 \를 \\로 써야 함. \\대신에 / 쓰지 말 것
 	// 복사한 폴더 경로 마지막 img 뒤에 '\\' 쓰는 것 잊지 말기
 	//*************************************************
-	String uploadDir = "C:\\eroonsung\\workspace_sboot_04_withFileUpload\\prj01\\src\\main\\resources\\static\\resources\\img\\";
+	//String uploadDir = "C:\\eroonsung\\workspace_sboot_04_withFileUpload\\prj01\\src\\main\\resources\\static\\resources\\img\\";
+	
+	//*************************************************
+	// application.properties 파일에 board_pic_dir라는 변수에 설정된 문자를 속성변수 uploadDir에 저장하기
+	//*************************************************
+	/*
+	@Value("${board_pic_dir}")
+	String uploadDir2;
+	*/
+	
+	//*************************************************
+	// 업로드 파일의 저장경로를 저장하는 속성변수 선언하기
+	// Info 클래스의 속성변수 board_pic_dir 안의 데이터를 속성변수 uploadDir에 저장하기
+	//*************************************************
+	String uploadDir = Info.board_pic_dir;
 	
 	//*************************************************
 	// [1개 게시판 글 입력 후 입력 적용 행의 개수]를 리턴하는 메소드 선언
