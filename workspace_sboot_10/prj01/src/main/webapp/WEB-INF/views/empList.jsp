@@ -141,7 +141,7 @@
 	}
 
 	function headerSort(){
-		var thObjs = $(".employeeList tr").find("th:gt(1)");
+		var thObjs = $(".employeeList tr").find("th:gt(2)");
 		thObjs.css("cursor", "pointer");
 		thObjs.click(function(){
 			var thisThObj = $(this);
@@ -336,9 +336,10 @@
 		</div>
 		<div style="height:10px"></div>
 		<div class="searchResult">
-			<table border=1 class="employeeList" width = "500px">
+			<table border=1 class="employeeList" width = "600px">
 				<tr bgColor="gray">
 				<th>번호<th class="emp_no">직원번호
+				<th class="pic">직원사진
 				<th class="emp_name">직원명
 				<th class="jikup">직급
 				<th class="hire_date">입사일
@@ -362,7 +363,13 @@
 							
 							
 							<td> ${emp.emp_no}
+							<td width="25%"> 
+							<c:if test= "${!empty emp.pic}">
+								<img src="resources/img/${emp.pic}" width="100%" > 
+							</c:if>	
+							
 							<td> ${emp.emp_name}
+							
 							<td> ${emp.jikup}
 							<td> ${emp.hire_date}
 							<td> ${emp.dep_name}

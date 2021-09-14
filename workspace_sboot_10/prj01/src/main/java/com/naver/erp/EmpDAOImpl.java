@@ -133,4 +133,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return MgrEmpList;
 	}
 
+	@Override
+	public String getPic(EmpDTO empDTO) {
+		String pic = this.sqlSession.selectOne(
+				"com.naver.erp.EmpDAO.getPic"
+				, empDTO);
+		return pic;
+	}
+
 }

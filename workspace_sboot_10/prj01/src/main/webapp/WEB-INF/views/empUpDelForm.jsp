@@ -28,6 +28,8 @@
 			//name=upDel hidden 태그 안에 'del'넣기
 			$("[name='upDel']").val("del");
 		}
+
+		document.empUpDelForm.enctype="multipart/form-data";
 		
 		//-------------------------------------------------------
 		//현재 화면에서 페이지 이동 없이
@@ -39,7 +41,11 @@
 			// form 태그 안의 입력양식 데이터 즉, 파라미터값을 보내는 방법 지정 
 			, type: "post"
 			// 웹서버로 보낼 파라미터명과 파라미터값을 설정
-			, data: $("[name=empUpDelForm]").serialize()
+			//, data: $("[name=empUpDelForm]").serialize()
+			
+			, processData:false
+			, contentType: false
+			, data: new FormData( $("[name=empUpDelForm]").get(0) )
 			//--------------------------------------------
 			// 서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정
 			// 익명함수의 매개변수에는 서버가 보내온 html 소스가 문자열로 들어온다
@@ -107,6 +113,17 @@
 				<tr>
 					<th bgcolor="lightgray">직원이름</th>
 					<td><input type="text" name="emp_name" class="emp_name" size="10" maxlength=10 value="${empDTO.emp_name}"></td>
+				</tr>
+				<tr>
+					<th bgcolor="lightgray">직원사진</th>
+					<td>
+						<input type="file" name="img" class="img">
+						<c:if test="${!empty empDTO.pic}">
+							<div style="height:3pt"></div>
+							<img src="resources/img/${empDTO.pic}" width="30%">
+						</c:if>	
+						<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
+					</td>
 				</tr>
 				<tr>
 					<th bgcolor="lightgray">부서</th>

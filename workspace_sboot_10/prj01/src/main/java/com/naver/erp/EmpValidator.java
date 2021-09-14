@@ -147,17 +147,7 @@ public class EmpValidator implements Validator {
 			if( phone!=null && phone.length() >12) {
 				errors.rejectValue("phone", "핸드폰번호는 '-'없이 11자입니다.");
 			}
-			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
-			//		BoardDTO 객체의 속성변수명 writer 이 비거나 공백으로 구성되어 있으면
-			//		경고 메시지를 Errors 객체에 저장하기
-			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-			ValidationUtils.rejectIfEmptyOrWhitespace(
-				errors                       // Errors 객체
-				, "mgr_emp_no"                   // BoardDTO 객체의 속성변수명
-				, "직속상관번호 입력요망"         // BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을때 경고 문구
-			);
+
 			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
 			// BoardDTO 객체의 속성변수명 "subject" 저장된 데이터의 길이가 20자 보다 크면
 			// Errors 객체에 속성변수명 "subject" 과 경고 메시지 저장하기

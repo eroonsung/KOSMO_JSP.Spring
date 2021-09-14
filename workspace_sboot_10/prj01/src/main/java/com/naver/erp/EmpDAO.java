@@ -35,5 +35,7 @@ public interface EmpDAO {
 
 	List<EmpDTO> getMgrEmpList();
 
+	String getPic(EmpDTO empDTO);
+
 
 }

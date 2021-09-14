@@ -1,5 +1,6 @@
 package com.naver.erp;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -77,16 +79,41 @@ public class EmpController {
 	@RequestMapping(value="/empRegProc.do")
 	public ModelAndView checkEmpRegForm(
 			EmpDTO empDTO
+			, @RequestParam("img") MultipartFile multi
 			, BindingResult bindingResult
 			
 		) {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("empRegProc.jsp");
+		
+		//----------------------------------------------------
+		//업로드 된 파일의 크기와 확장자 체크하기
+		//----------------------------------------------------
+		//만약에 업로드된 파일이 있으면
+		if(multi.isEmpty()==false) {
+			//만약에 업로드된 파일의 크기가 1,000,000 byte(=1,000KB)보다 크면
+			if(multi.getSize()>1000000) {
+				mav.addObject("empRegCnt",0);
+				mav.addObject("msg","업로드 파일이 1000kb보다 크면 안됩니다.");
+			}
+			
+			//만약에 업로드된 파일의 확장자가 이미지 확장자가 아니면
+			String fileName=multi.getOriginalFilename();
+			
+			if(fileName.endsWith(".jpg")==false&&fileName.endsWith(".gif")==false&&fileName.endsWith(".png")==false) {
+				mav.addObject("empRegCnt",0);
+				mav.addObject("msg","이미지 파일이 아닙니다.");
+			}
+		}
+		
 		try { 
+			
 			String msg = "";
 			msg = check_EmpDTO(empDTO, bindingResult);
 			
 			mav.addObject("msg", msg);
+			
+
 			
 			if( msg.equals("") ) {
 				//----------------------------------------------------
@@ -95,7 +122,7 @@ public class EmpController {
 				//----------------------------------------------------
 					// 결과가 1이면(한 행이 들어가면) 성공
 				//boardDTO에 파라미터값이 담겨있음
-				int empRegCnt = this.empService.insertEmp(empDTO);
+				int empRegCnt = this.empService.insertEmp(empDTO, multi);
 				//System.out.println("boardRegCnt => "+ boardRegCnt); // DB연동 성공했는지 확인
 				
 				//----------------------------------------------------
@@ -144,11 +171,32 @@ public class EmpController {
 	public ModelAndView checkEmpUpDelForm(
 			EmpDTO empDTO
 			, @RequestParam(value="upDel") String upDel
+			, @RequestParam("img") MultipartFile multi
 			, BindingResult bindingResult
-		) {
+		) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		//mav.setViewName("boardUpDelProc.jsp");
 		mav.setViewName("empUpDelProc.jsp");
+		
+		//----------------------------------------------------
+		//업로드 된 파일의 크기와 확장자 체크하기
+		//----------------------------------------------------
+		//만약에 업로드된 파일이 있으면
+		if(multi.isEmpty()==false) {
+			//만약에 업로드된 파일의 크기가 1,000,000 byte(=1,000KB)보다 크면
+			if(multi.getSize()>1000000) {
+				mav.addObject("empUpDelCnt",0);
+				mav.addObject("msg","업로드 파일이 1000kb보다 크면 안됩니다.");
+			}
+			
+			//만약에 업로드된 파일의 확장자가 이미지 확장자가 아니면
+			String fileName=multi.getOriginalFilename();
+			
+			if(fileName.endsWith(".jpg")==false&&fileName.endsWith(".gif")==false&&fileName.endsWith(".png")==false) {
+				mav.addObject("empUpDelCnt",0);
+				mav.addObject("msg","이미지 파일이 아닙니다.");
+			}
+		}
 		
 		if(upDel.equals("up")) {
 			String msg = "";
@@ -157,7 +205,7 @@ public class EmpController {
 			mav.addObject("msg", msg);
 			
 			if(msg.equals("")) {
-				int empUpDelCnt = this.empService.updateEmp(empDTO);
+				int empUpDelCnt = this.empService.updateEmp(empDTO, multi);
 				mav.addObject("empUpDelCnt", empUpDelCnt);
 			}
 			else {

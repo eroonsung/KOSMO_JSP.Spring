@@ -59,6 +59,7 @@
 					e.emp_no||'' 						 "emp_no"
 				    , e.emp_name                        "emp_name"
 				    , e.jikup                         "jikup"
+				    , e.pic								"pic"
 				    , to_char(e.hire_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "hire_date"
 				    , d.dep_name		 "dep_name"
 			    from 
@@ -109,6 +110,7 @@
 		select
             e.emp_no       		"emp_no"
             , e.emp_name       "emp_name"
+            , e.pic				"pic"
             , e.dep_no        "dep_no"
             , e.jikup     "jikup"
             , e.salary     	"salary"
@@ -126,6 +128,11 @@
 		insert into employee(
 			 emp_no
 			 , emp_name
+			 
+			 <if test="pic!=null and pic.length()>0">
+			 , pic 
+			 </if>
+			 
 			 , dep_no
 			 , jikup
 			 , salary
@@ -135,6 +142,11 @@
 		) values(
 			(select nvl(max(emp_no),0)+1 from employee)
 			 , #{emp_name} <!-- BoardDTO 객체의 subject 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			
+			 <if test="pic!=null and pic.length()>0">
+			 , #{pic}
+			 </if>
+			 
 			 , #{dep_no} <!-- BoardDTO 객S체의 writer 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
 			 , #{jikup}
 			 , #{salary} <!-- BoardDTO 객체의 content 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
@@ -148,6 +160,18 @@
 		update employee
 			set emp_name = #{emp_name}
 			,dep_no = #{dep_no}
+			
+			<if test="is_del!=null and is_del.length()>0">
+			, pic = null
+			</if>
+			
+			<if test="is_del==null or is_del.length()==0">
+				<if test="pic!=null and pic.length()>0">
+			 	, pic = #{pic}
+				</if>
+			</if>
+			
+			
 			,jikup = #{jikup}
 			,salary = #{salary}
 			,jumin_num = #{jumin_num}
@@ -214,4 +238,10 @@
 			"emp_no"
 	</select>
 
+	<!-- ******************************************************* -->
+	<!-- 게시판 이름을 가져오는 select문을 내포한 select태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getPic" parameterType="com.naver.erp.EmpDTO" resultType="String">
+		select pic from employee where emp_no=#{emp_no}
+	</select>
 </mapper>

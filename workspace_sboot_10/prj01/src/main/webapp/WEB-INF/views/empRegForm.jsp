@@ -19,12 +19,20 @@
 
 	function checkEmpRegForm(){
 		if(confirm("정말 등록하시겠습니까?")==false) {return;}
+
+		document.empRegForm.enctype="multipart/form-data";
+			
 		$.ajax({
 			url:"/empRegProc.do"
 			// form 태그 안의 입력양식 데이터 즉, 파라미터값을 보내는 방법 지정 
 			, type: "post"
 			// 서버로 보낼 파라미터명과 파라미터값을 설정
-			, data: $("[name=empRegForm]").serialize()
+			//, data: $("[name=empRegForm]").serialize()
+			
+			, processData:false
+			, contentType: false
+			, data: new FormData( $("[name=empRegForm]").get(0) )
+			
 			//--------------------------------------------
 			// 서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정
 			// 익명함수의 매개변수에는 서버가 보내온 html 소스가 문자열로 들어온다
@@ -82,6 +90,10 @@
 					<td><input type="text" name="emp_name" class="emp_name" size="10" maxlength=10></td>
 				</tr>
 				<tr>
+					<th bgcolor="lightgray">직원사진</th>
+					<td><input type="file" name="img" class="img"></td>
+				</tr>
+				<tr>
 					<th bgcolor="lightgray">부서</th>
 					<td>
 						<select name="dep_no" >
@@ -117,7 +129,7 @@
 					<th bgcolor="lightgray">직속상관</th>
 					<td>
 						<select name="mgr_emp_no" >
-						<option value="">
+						<option value="0">
 							<c:forEach var="list" items="${MgrEmpList}" varStatus="loopTagStatus">
 								<option value="${list.emp_no}">${list.emp_no} - ${list.emp_name}(${list.jikup}) - ${list.dep_name}
 							</c:forEach>
