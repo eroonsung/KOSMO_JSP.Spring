@@ -460,14 +460,17 @@
 			,email = #{email}
 			,content = #{content}
 			
-			<if test="pic!=null and pic.length()>0">
-			 , pic = #{pic}
+			
+			<if test="is_del!=null and is_del.length()>0">
+		 	, pic = null
 			</if>
-			<if test="is_delete!=null and is_delete.length()>0">
-				<if test ="is_delete.equals('deleteImg')">
-			 	, pic = null
-			 	</if>
+			
+			<if test="is_del==null or is_del.length()==0">
+				<if test="pic!=null and pic.length()>0">
+				 , pic = #{pic}
+				</if>
 			</if>
+			
 			
 		where b_no=#{b_no}
 			and pwd=${pwd}

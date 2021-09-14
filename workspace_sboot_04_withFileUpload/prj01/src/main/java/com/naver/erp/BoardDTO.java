@@ -20,9 +20,10 @@ public class BoardDTO {
 	private int print_no;
 	private int print_level;
 	
-	private String is_delete;
-	//===================================================
+	private String is_del;
 
+	//===================================================
+	
 	public int getB_no() {
 		return b_no;
 	}
@@ -119,15 +120,16 @@ public class BoardDTO {
 		this.print_level = print_level;
 	}
 
-	public String getIs_delete() {
-		return is_delete;
+	public String getIs_del() {
+		return is_del;
 	}
 
-	public void setIs_delete(String is_delete) {
-		this.is_delete = is_delete;
+	public void setIs_del(String is_del) {
+		this.is_del = is_del;
 	}
 	
+
 	
-	
-	
+
+
 }

@@ -29,6 +29,7 @@
 		$(document).ready(function(){
 			//$(".writer").val("${requestScope.boardDTO.writer}");
 			//자스로 value값을 넣을 때 el로 꺼내온 값은 ""로 감싸야함
+			$(".pwd").val("1234");
 		})
 		// **********************************************************
 		// [게시판 등록 화면]에 입력된 데이터의 유효성 체크 함수 선언
@@ -58,10 +59,6 @@
 				$("[name='upDel']").val("del");
 			}
 
-			if($(".is_delete").prop("checked")){
-				$(".is_delete").val("deleteImg");
-				$(".img").val("");
-			}
 			//--------------------------------------------
 			//form 태그에 파일업로드 전송 관련 설정하기
 			//--------------------------------------------
@@ -204,10 +201,9 @@
 						<input type="file" name="img" class="img">
 						<c:if test= "${!empty requestScope.boardDTO.pic}">
 							<div style="height:3pt"></div>
-							<img src="resources/img/${requestScope.boardDTO.pic}" width="30%"> 
-							<input type="checkbox" name="is_delete" class="is_delete" value="">삭제
+							<img src="resources/img/${requestScope.boardDTO.pic}" width="30%"> 	
 						</c:if>	
-						
+						<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
 					</td>
 				</tr>
 				<tr>
