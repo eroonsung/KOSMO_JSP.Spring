@@ -161,7 +161,7 @@
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
 		<form name="boardRegForm" method="post" action="/${naverPath}boardRegProc.do" >
-			<table border=1 cellpadding=5 class="tbcss2">
+			<table border=1 cellpadding="${cellpadding}" class="tbcss2" width=500>
 			<%-- 
 				<c:if test="${empty param.b_no}">
 					<caption><b>새글쓰기</b></caption>	
@@ -221,8 +221,9 @@
 				<input type="hidden" name="b_no" value="${param.b_no}" >
 			</c:if>
 			
-			
 		</form>
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 

@@ -244,6 +244,7 @@
 		// body태그 안의 내용을 모두 읽어들인 후 실행할 자스 코드 설정하기
 		// **********************************************************
 		$(document).ready(function(){
+			
 						
 			$(".rowCntPerPage").change(function(){
 				$(".selectPageNo").val("1");
@@ -344,7 +345,7 @@
 		
 		<!-- <div class="boardListAllCnt">총 <% // =boardListAllCnt%>개</div> -->
 		<!-- <div class="boardListAllCnt">총 ${requestScope.boardListAllCnt}개</div> -->
-		<span class="boardListAllCnt">총 ${boardListAllCnt}개</span>
+		검색 총 개수 : <span class="boardListAllCnt">${boardListAllCnt}</span>개/ ${requestScope.totCnt}개
 			<!-- ---------------------------------------------- -->
 			<!-- 한 화면에 보여줄 검색 결과물 행의 개수 관련 입력양식 선언 -->
 			<!-- ---------------------------------------------- -->
@@ -446,7 +447,7 @@
 		<!-- 검색 결과 출력하기 -->
 		<!-- ============================================ -->		
 		<div class="searchResult">
-			<table border=1 class="tbcss0" cellpadding="3" width=500 >
+			<table border=1 class="tbcss0" cellpadding="3" width=600 >
 				<tr bgColor="gray">
 				<th>번호<th>제목<th>작성자<th>조회수
 					<th><span class="reg_date">등록일</span>
@@ -495,6 +496,9 @@
 			<input type="hidden" name="b_no">
 			<!-- <input type="text" name="b_no"> -->	
 		</form>
+		
+		<div>${sessionScope.msg}</div>
+		
 	</center>
 </body>
 

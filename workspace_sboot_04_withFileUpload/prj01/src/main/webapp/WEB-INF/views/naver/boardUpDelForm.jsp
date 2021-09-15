@@ -177,7 +177,7 @@
 		<!-- [로그인 정보 입력양식]을 내포한 form 태그 선언-->
 		<!-- *************************************************** -->
 		<form name="boardUpDelForm">
-			<table border=1 cellpadding=5 class="tbcss2">
+			<table border=1 cellpadding="${cellpadding}"class="tbcss2" width=500>
 			<caption><b>게시판 수정/삭제</b></caption>
 				<tr>
 					<th bgcolor="${thBgColor}">이름</th>
@@ -201,9 +201,10 @@
 						<input type="file" name="img" class="img">
 						<c:if test= "${!empty requestScope.boardDTO.pic}">
 							<div style="height:3pt"></div>
-							<img src="/resources/img/${requestScope.boardDTO.pic}" width="50%"> 	
+							<img src="/resources/img/${requestScope.boardDTO.pic}" width="${boardImgRate1}"> 	
+							<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
 						</c:if>	
-						<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
+						
 					</td>
 				</tr>
 				<tr>
@@ -229,6 +230,9 @@
 		<c:if test="${empty boardDTO}">
 			<script>alert('삭제된 글입니다.'); location.replace('/${naverPath}boardList.do')</script>
 		</c:if>
+		
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 

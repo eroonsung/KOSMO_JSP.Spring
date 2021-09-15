@@ -28,13 +28,6 @@
 			=>JSTL 은 EL 과 같이 쓰인다.
 
 	-->
-	
-<!-- --------------------------------------------- -->
-<!-- 공용변수 만들기 -->
-<!-- --------------------------------------------- -->
-<%
-	//String thBgColor = "lightyellow";
-%>
 
 <!-- --------------------------------------------- -->
 <!-- JSTL이라는 커스텀태그를 사용하여 HttpServletRequest 객체에 키값-데이터 저장하기 -->
@@ -57,56 +50,5 @@
 
 <c:set var="cellpadding" value="7" scope="request"/>
 <c:set var="cellpadding" value="5" scope="request"/>
-
-<c:set var="headerTrColor" value="#6E7783"  scope="request"/>
-<c:set var="oddTrColor" value="#D8E6E7"  scope="request"/>
-<c:set var="evenTrColor" value="#9DC3C1"  scope="request"/>
-
-
-<!-- --------------------------------------------- -->
-<!-- 공용함수 수입하기 -->
-<!-- JQuery 라이브러리 수입하기 -->
-<!-- css 파일 수입하기 -->
-<!-- --------------------------------------------- -->
-<script src="/resources/common.js"></script>
-<script src="/resources/jquery-1.11.0.min.js"></script>
-<link href="/resources/common.css" rel="stylesheet" type="text/css" >
-
-
-
-
-<script>
-	$(document).ready(function(){
-		$(".logout").prepend(
-			"<center><div><span style='cursor:pointer' onclick='location.replace(\"/${naverPath}logout.do\");'>[로그아웃]</span></div></center>"	
-		);
-		
-		$("body").attr("bgcolor", "${bodyBgColor}")
-
-	});
-	
-	// **********************************************************
-	// 테이블 태그 내부의 배경색을 바꾸는 함수
-	// **********************************************************
-	function changeBgColor(){
-		setTrBgcolor(
-				//--------------------------------------
-				"tbcss0"		//테이블 태그의 클래스값
-				//--------------------------------------
-				, "${headerTrColor}"
-				//, "gray"			//head tr의 배경색값
-				//--------------------------------------
-				, "${oddTrColor}"
-				//,"#eef7ff"		//head tr 이후의 홀수 tr 배경색값
-				//,"white"
-				//--------------------------------------
-				, "${evenTrColor}"
-				//,"lightblue"	//head tr 이후의 짝수 tr 배경색값
-				//--------------------------------------
-				,"#ff5f2e"	//마우스를 댔을 때 배경색값
-		);
-	}
-</script>	
-
 
 

@@ -48,7 +48,7 @@ public class BoardDAOImpl implements BoardDAO {
 			//------------------------------------------------------
 			, boardDTO 
 		);
-		System.out.println("BoardDAOImpl.insertBoard 메소드 호출 성공"); 
+		//System.out.println("BoardDAOImpl.insertBoard 메소드 호출 성공"); 
 		return boardRegCnt;
 	}
 	
@@ -235,5 +235,5 @@ public class BoardDAOImpl implements BoardDAO {
 		return pic;
 	}
 
-
+	
 }

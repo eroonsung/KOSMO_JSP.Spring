@@ -71,7 +71,7 @@
 		<b>[글 상세 보기]</b>
 		<%-- <c:if test="${boardDTO!=null}"> --%> 
 		<c:if test="${!empty requestScope.boardDTO}">
-			<table border=1 cellpadding=5 class="tbcss2" >
+			<table border=1 cellpadding="${cellpadding}" class="tbcss2" width=500>
 				<tr align=center>
 					<th bgcolor="${requestScope.thBgColor}">글번호</th>
 					<td>${requestScope.boardDTO.b_no}</td> <!-- </%=b_no%> -->
@@ -104,7 +104,7 @@
 					<th bgcolor="${requestScope.thBgColor}">이미지</th>
 					<td colspan=3>  
 					<c:if test= "${!empty requestScope.boardDTO.pic}">
-						<img src="/resources/img/${requestScope.boardDTO.pic}" width="50%"> 
+						<img src="/resources/img/${requestScope.boardDTO.pic}" width="${boardImgRate1}"> 
 					</c:if>	
 					</td>
 				</tr>
@@ -136,7 +136,8 @@
 			<input type="hidden" name="b_no" value="${requestScope.boardDTO.b_no}">
 		</form>
 		
-		
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 

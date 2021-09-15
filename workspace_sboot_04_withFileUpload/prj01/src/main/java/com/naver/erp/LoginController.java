@@ -83,6 +83,7 @@ public class LoginController {
 	//***********************************************
 	//가상 주소 /loginProc3.do로 접근하면 호출되는 메소드 선언
 	//DB연동 결과물을 json 형태로 바로 클라이언트에게 보냄
+		// ModelAndView 객체를 리턴하지 않음
 	//	메소드 앞에 
 	//	@RequestMapping(~,~,, produces = "application/json;charset=UTF-8")와
 	//	@ResponseBody가 붙으면 리턴하는 데이터가 클라이언트에게 전송된다.
@@ -107,15 +108,17 @@ public class LoginController {
 			// HttpSession 객체의 메위주를 저장하는 매개변수 session 선언하기
 			// HttpServletResponse 객체의 메위주를 저장하는 매개변수 response 선언하기
 			//----------------------------------------------------
-			@RequestParam( value="login_id") String login_id
+			@RequestParam( value="login_id") String login_id	// default (required = true)
 			, @RequestParam( value="pwd") String pwd	
 			, @RequestParam( value="is_login", required=false ) String is_login
 			, HttpSession session		
 			, HttpServletResponse response
 	) {
+		//System.out.println("LoginController.loginProc 메소드 실행");//-> 실행되지 않으면 매개변수 문제
 		//----------------------------------------------------
 		//HashMap 객체 생성하기 => 아이디 암호를 하나의 박스에 저장
 		// 아이디 암호를 해시맵에 저장하는 이유 : 한곳에 집어넣어야 mapper에 전달할 수 있기 때문(단일화)
+			// 쿼리문에 참여하는 데이터는 형식적으로 하나 유형의 데이터여야 함
 		//HashMap 객체에 로그인 아이디 저장
 		//HashMap 객체에 로그인 암호 저장
 		//----------------------------------------------------
@@ -123,11 +126,15 @@ public class LoginController {
 		map.put("login_id", login_id);
 		map.put("pwd", pwd);
 		
+		
 		//----------------------------------------------------
 		//LoginDAOImpl 객체의 getLogin_idCnt 메소드를 호출하여
 		//로그인 아이디와 암호의 전체 개수를 얻기
+			// @Service 층을 거치지 않고 @Repository 층으로 바로 가는 이유
+			// : 트랜잭션이 필요없기 때문에
 		//----------------------------------------------------
-		int login_idCnt = loginDAO.getLogin_idCnt(map);
+		int login_idCnt = this.loginDAO.getLogin_idCnt(map);
+		
 		
 		//----------------------------------------------------
 		//만약 login_idCnt변수 안의 데이터가 1이면
@@ -135,10 +142,13 @@ public class LoginController {
 		// 즉 만약 로그인이 성공하면
 		//----------------------------------------------------
 		if( login_idCnt==1 ) {
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//HttpSession 객체에 로그인 아이디 저장하기
 			//HttpSession 객체에 로그인 아이디를 저장하면 재접속했을때 다시 꺼낼 수 있음
+				//HttpSession 객체에 넣는 이유 : 재접속할때마다 로그인 했는지 확인하기 위해서
 			//<참고> HttpSession 객체는 접속한 이후에도 제거되지 않고 지정된 기간동안 살아있는 객체이다.
 			//<참고> HttpServletRequest, HttpServletResponse 객체는 접속할때 생성되고 응답 이후 삭제되는 객체
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			session.setAttribute("login_id", login_id);
 			
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,8 +160,16 @@ public class LoginController {
 				//  클라이언트가 가지고 있는 쿠키를 null값으로 덮어씌움
 				//	=> 마치 제거한 것과 같은 효과
 				//==============================================
+					//(쿠키명, 쿠키값, 살아있을 시간, HttpServletResponse 객체)
+				
+				// 쿠키명 "login_id"에 쿠키값 null로 응답메시지에 쿠키 저장하기
+				// 응답메시지에 저장된 쿠키를 클라이언트쪽에 저장, 이미 존재하면 덮어씀
 				Util.addCookie("login_id", null, 0, response);
 				Util.addCookie("pwd", null, 0, response);
+				
+				/*Cookie cookie1 = new Cookie("login_id", null);
+				cookie1.setMaxAge(0);
+				response.addCookie(cookie1);*/
 			}
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//매개변수 is_login에 'yes'가 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 있을 경우)
@@ -164,8 +182,18 @@ public class LoginController {
 				Util.addCookie("login_id", login_id, 60*60*24, response);
 				Util.addCookie("pwd", pwd, 60*60*24, response);
 			}
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			//HttpSession 객체에 메시지 저장하기
+			//HttpSession 객체에 저장된 데이터는 모든 JSP 페이지에서 ${sessionScope.키값명}으로 꺼내 표현할 수 있다.
+			//<참고> sessionScope은 생략 가능함 (먼저 sessionScope을 붙여서 찾은 이후 requestScope를 붙여서 찾음)
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			session.setAttribute("msg", "짱짱");
 		}
 		
+		
+		//----------------------------------------------------
+		//로그인 아이디와 암호의 존재 개수 리턴하기
+		//----------------------------------------------------
 		return login_idCnt;
 	}		
 	
@@ -387,6 +415,8 @@ public class LoginController {
 				
 				Util.addCookie("login_id", null, 0, response);
 				Util.addCookie("pwd", null, 0, response);
+				
+				
 			}
 			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			//매개변수 is_login에 'yes'가 저장되어 있으면(=[아이디, 암호 자동 입력]의사가 있을 경우)

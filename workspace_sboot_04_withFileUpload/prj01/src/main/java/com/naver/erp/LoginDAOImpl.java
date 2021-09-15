@@ -31,23 +31,26 @@ public class LoginDAOImpl implements LoginDAO {
 	//++++++++++++++++++++++++++++++++++++++++++++++++++
 	public int getLogin_idCnt( Map<String,String> id_pwd_map  ) {
 		
-		System.out.println("LoginDAOImpl.getLogin_idCnt 메소드 호출 시작");
+		//System.out.println("LoginDAOImpl.getLogin_idCnt 메소드 호출 시작");
 		//System.out.println("LoginDAOImpl.getLogin_idCnt 매개변수 id_pwd_map=>"+id_pwd_map);
 
 		//------------------------------------------------------
 		//SqlSessionTemplate 객체의 selectOne 메소드 호출로
-		//mybatis 프레임워크가 관리하는 SQL 구문을 호출하여
+		//mybatis 프레임워크가 관리하는 select 구문을 실행하여 얻은
+		//1행 m열의 데이터를 리턴받는다.
+			// 이 데이터는 mybatis 쪽에서 resultType 속성값에 설정된다.
 		//[로그인 아이디, 암호 존재 개수]를 얻기
 		//------------------------------------------------------
 		//SqlSessionTemplate객체의 selectOne메소드는 1행을 리턴(1열,n열 포함)하는 select 쿼리문을 불러온다.
-		//1행 1열 : String, int 형
-		//1행 n열 : HashMap
+			//1행 1열 : String, int, double 형
+			//1행 n열 : HashMap/ DTO객체
+				//=> select 구문의 resultType과 일치해야 함
 		int login_idCnt = this.sqlSession.selectOne(
 			//=====실행할 SQL 구문의 위치를 지정하기=====
 			//SQL구문 설정 XML파일(=mapper_login.xml)에서
 			//<mapper namespace="com.naver.erp.LoginDAO">태그 내부의
-			//<select id='getLogin_iSdCnt' ~>태그 내부의
-			//[1행 리턴 select 쿼리문]=>selectOne을 실행하고 얻은 데이터를 int로 리턴한다.
+				//<select id='getLogin_iSdCnt' ~>태그 내부의
+					//[1행 리턴 select 쿼리문]=>selectOne을 실행하고 얻은 데이터를 int로 리턴한다.
 			
 			// 실행할 SQL구문의 위치 문자열패턴은 아래와 같음
 			// => xml파일 중에 mapper태그의namespace명.mapper태그내부의호출할SQL구문소유한태그id값
@@ -59,7 +62,7 @@ public class LoginDAOImpl implements LoginDAO {
 		);
 		
 		
-		System.out.println("LoginDAOImpl.getLogin_idCnt 메소드 호출 종료");
+		//System.out.println("LoginDAOImpl.getLogin_idCnt 메소드 호출 종료");
 		return login_idCnt;
 	}
 

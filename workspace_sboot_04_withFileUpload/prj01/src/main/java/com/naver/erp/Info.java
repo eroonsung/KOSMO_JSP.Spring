@@ -3,8 +3,8 @@ package com.naver.erp;
 //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 //공용으로 사용할 문자 데이터를 담는 클래스 만들기
 //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-//public interface Info {
-public class Info {
+public interface Info {
+//public class Info {
 	
 	//*************************************************
 	// 업로드 파일의 저장경로를 저장하는 속성변수 선언하기
