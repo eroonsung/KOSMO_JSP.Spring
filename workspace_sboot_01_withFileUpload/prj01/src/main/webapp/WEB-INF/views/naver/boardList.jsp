@@ -193,7 +193,7 @@
 		</div>
 		
 		
-		<div class="boardListAllCnt">총  ${requestScope.boardListAllCnt}개</div>
+		검색 총 개수 : <span class="boardListAllCnt">${boardListAllCnt}</span>개/ ${requestScope.totCnt}개
 		
 		<div class="searchResult">
 		<table border=1  class="tbcss0">
@@ -223,6 +223,7 @@
 		<form name="boardContentForm" method="post" action="/${naverPath}boardContentForm.do">
 			<input type="hidden" name="b_no">
 		</form>
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 </html>

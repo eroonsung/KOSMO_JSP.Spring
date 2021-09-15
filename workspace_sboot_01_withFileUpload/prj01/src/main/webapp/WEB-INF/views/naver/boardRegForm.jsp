@@ -150,6 +150,8 @@
 				<input type="hidden" name="b_no" value="${param.b_no}">
 			</c:if>
 		</form>
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 </html>

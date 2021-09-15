@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +30,13 @@ public class BoardController {
 	private String path = Info.naverPath;
 	
 	//===========================================================================
+	@ModelAttribute("totCnt")
+	public int getTotCnt ( BoardSearchDTO boardSearchDTO  ) {
+		int totCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
+		return totCnt;		
+	}
+	
+	//===========================================================================
 	/*
 	@RequestMapping(value="boardList.do")
 	public ModelAndView goBoardList() {
@@ -42,7 +50,7 @@ public class BoardController {
 	}
 	*/
 	//@RequestMapping(value="boardList.do")
-	public ModelAndView goBoardList(BoardSerachDTO boardSearchDTO ) {
+	public ModelAndView goBoardList(BoardSearchDTO boardSearchDTO ) {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		
@@ -100,7 +108,7 @@ public class BoardController {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//Util에 있는 페이징 처리 getPagingNos 메소드 사용
 	@RequestMapping(value="boardList.do")
-	public ModelAndView goBoardList2(BoardSerachDTO boardSearchDTO ) {
+	public ModelAndView goBoardList2(BoardSearchDTO boardSearchDTO ) {
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		int boardListAllCnt = this.boardDAO.getBoardListAllCnt(boardSearchDTO);
 		

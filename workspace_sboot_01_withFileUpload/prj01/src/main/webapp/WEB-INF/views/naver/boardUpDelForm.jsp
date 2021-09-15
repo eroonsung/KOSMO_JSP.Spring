@@ -173,8 +173,9 @@
 					<c:if test= "${!empty boardDTO.pic}">
 						<div style="height:6pt"></div>
 						<img src="/resources/img/${boardDTO.pic}" width="50%"> 
+						<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
 					</c:if>	
-					<input type="checkbox" name="is_del" class="is_del" value="yes">삭제
+					
 					</td>
 				</tr>
 				<tr>
@@ -194,6 +195,8 @@
 		<c:if test="${empty boardDTO}">
 			<script>alert('삭제된 글입니다.'); location.replace('/${naverPath}boardList.do')</script>
 		</c:if>
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${sessionScope.msg}</div>
 	</center>
 </body>
 

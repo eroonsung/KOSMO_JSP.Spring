@@ -71,6 +71,8 @@
 		<c:if test="${empty requestScope.boardDTO}">
 			<script>alert('삭제된 글입니다.'); location.replace('/${naverPath}boardList.do')</script>
 		</c:if>
+		[현재 게시판 총 개수 : ${requestScope.totCnt}개]
+		<div>${requstSession.msg }]</div>
 	</center>
 	
 	<form name="boardUpDelForm" method="post" action="/${naverPath}boardUpDelForm.do">

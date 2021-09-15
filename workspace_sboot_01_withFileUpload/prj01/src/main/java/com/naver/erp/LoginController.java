@@ -147,8 +147,8 @@ public class LoginController {
 				Util.addCookie("login_id", login_id, 60*60*24, response);
 				Util.addCookie("pwd", pwd, 60*60*24, response);
 			}
-		}
-		
+			session.setAttribute("msg", "짱");
+		}	
 		return login_idCnt;	
 	}	
 	//----------------------------------------------------------------------------

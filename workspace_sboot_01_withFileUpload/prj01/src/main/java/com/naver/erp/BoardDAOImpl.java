@@ -22,7 +22,7 @@ public class BoardDAOImpl implements BoardDAO{
 		return boardList;
 	};
 	*/
-	public List<Map<String,String>> getBoardList(BoardSerachDTO boardSearchDTO){
+	public List<Map<String,String>> getBoardList(BoardSearchDTO boardSearchDTO){
 		List<Map<String,String>> boardList = this.sqlSession.selectList(
 				"com.naver.erp.BoardDAO.getBoardList"
 				, boardSearchDTO
@@ -30,7 +30,7 @@ public class BoardDAOImpl implements BoardDAO{
 		return boardList;
 	};
 	
-	public int getBoardListAllCnt(BoardSerachDTO boardSearchDTO) {
+	public int getBoardListAllCnt(BoardSearchDTO boardSearchDTO) {
 		int boardListAllCnt = this.sqlSession.selectOne(
 				"com.naver.erp.BoardDAO.getBoardListAllCnt"
 				, boardSearchDTO				
