@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.CusDAO">
+	<sql id="cusWhere">
+		and c.cus_no not in (select cus_no from customer_deleted)
+    	<if test="keyword1!=null and keyword1.length()>0">
+   		and 
+   		(
+    	upper(cus_no) like upper('%${keyword1}%') 
+    	or upper(cus_name) like upper('%${keyword1}%')     	
+    	or upper(tel_num) like upper('%${keyword1}%') 
+    	or upper(emp_name) like upper('%${keyword1}%') 
+    	)
+    	</if>
+    	<if test="ageDecade!=null and ageDecade.size()>0">
+    		and
+    		<foreach collection="ageDecade" item="ageDecade" open="(" separator=" or " close=")">
+   				floor(( to_number(   to_char(sysdate, 'YYYY')   )
+                        - to_number(
+                            case 
+                                substr(c.jumin_num,7,1)
+                                when '1' then '19'
+                                when '2' then '19'
+                                else '20'
+                                end
+                                ||substr(c.jumin_num,1,2))
+                                + 1)*0.1) = #{ageDecade}
+    		</foreach>
+    	</if>	
+    	
+    	
+    </sql>
+    
+	<select id="getCusListAllCnt" parameterType="com.naver.erp.CusSearchDTO" resultType="int">
+		select 
+			count(*) 
+		from 
+			customer c, employee e
+		where
+	    	1=1  
+	    	and c.emp_no = e.emp_no(+)
+	    	<include refid="cusWhere"/>
+	</select>
+	
+		<select id="getCusList" parameterType="com.naver.erp.CusSearchDTO" resultType="java.util.HashMap">
+	
+		select * 
+		from (select rownum RNUM, zxcvb.*
+		        from (
+		        	select
+					c.cus_no||''									"cus_no"
+					, c.cus_name									"cus_name"
+					, substr(tel_num,1,3)||'-'||substr(tel_num,4,4)	"tel_num"
+					, to_number(   to_char(sysdate, 'YYYY')   )
+						- to_number(
+							case 
+								substr(c.jumin_num,7,1)
+								when '1' then '19'
+								when '2' then '19'
+								else '20'
+								end
+								||substr(c.jumin_num,1,2))
+								+ 1
+																	"age"
+					, nvl(e.emp_name,'없음')						"emp_name"
+			    from 
+			    	customer c, employee e
+			    where
+			    	1=1  
+			    	and c.emp_no = e.emp_no(+)
+					<include refid="cusWhere"/>
+				order by
+					
+					<if test="sortHeadName==null or sortHeadName.length()==0 
+		        				and sortAscDesc==null or sortAscDesc.length()==0">
+		        		c.cus_no
+		        	</if>
+		        	<if test="sortHeadName!=null and sortHeadName.length()>0 
+		        				and sortAscDesc!=null and sortAscDesc.length()>0">
+		        		<choose>
+		        			<when test="sortHeadName.equals('age')">
+		        				to_number(case when substr(c.jumin_num,7,1) in ('1','2') then '19'
+		        				else '20' end ||substr(c.jumin_num,1,6)) 
+		        				
+		        			</when>
+		        			<otherwise>
+		        				${sortHeadName}
+		        			</otherwise>
+		        		</choose>
+		        		${sortAscDesc}
+		        	</if>
+		                )zxcvb
+		        <!-- 부등호를 태그의 시작으로 인식하기 때문에 <![CDATA[비교문 입력]]>을 사용함 -->
+		        <!-- CDATA: character data -->
+			        <![CDATA[
+			        where rownum <= ${selectPageNo * rowCntPerPage})
+			    	where RNUM >= ${((selectPageNo-1)*rowCntPerPage)+1}
+			        ]]>
+		        <!--  
+		        where rownum &lt;= 10)
+				where  RNUM &gt;= 1
+				-->
+	
+	</select>
+	
+	<select id="getEmpList" resultType="com.naver.erp.CusDTO">
+		select 
+			e.emp_no "emp_no"
+			, e.emp_name "emp_name"
+			, d.dep_name "dep_name"
+			, e.jikup "jikup"
+		from 
+			employee e, dept d
+		where
+			e.dep_no = d.dep_no
+		order by
+			"emp_no"
+	</select> 
+	
+	<insert id="insertCus" parameterType="com.naver.erp.CusDTO">
+		insert into customer(
+			 cus_no
+			 , cus_name
+			 , tel_num
+			 , jumin_num
+			 
+			  <if test="emp_no>0">
+			 ,emp_no
+			 </if>
+			 
+		) values(
+			(select nvl(max(cus_no),0)+1 from customer)
+			 , #{cus_name}  <!-- BoardDTO 객S체의 writer 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{tel_num}
+			 , #{jumin_num} <!-- BoardDTO 객체의 pwd 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			
+			 <if test="emp_no>0">
+			 , #{emp_no}
+			 </if>
+		)	
+	</insert>
+	
+	<select id="getAgeDecadeList" resultType="com.naver.erp.CusDTO">
+		select
+	    	distinct floor((to_number(   to_char(sysdate, 'YYYY')   )
+	                        - to_number(
+	                            case 
+	                                substr(jumin_num,7,1)
+	                                when '1' then '19'
+	                                when '2' then '19'
+	                                else '20'
+	                                end
+	                                ||substr(jumin_num,1,2))
+	                                + 1)*0.1      )
+	                               							"ageDecade"
+		from customer
+		order by "ageDecade"
+			
+	</select>
+	
+	<select id="getCus" parameterType="int" resultType="com.naver.erp.CusDTO">
+		select 
+			c.cus_no "cus_no"
+		    , c.cus_name "cus_name"
+		    ,c.tel_num "tel_num"
+		    , c.jumin_num "jumin_num"
+		    , c.emp_no "emp_no"
+		from customer c, employee e
+		where c.emp_no = e.emp_no(+)
+			and cus_no=#{cus_no}
+			
+	</select>
+	
+	<select id="getCusCnt" parameterType="com.naver.erp.CusDTO" resultType="int">
+		select count(*) from customer where cus_no=#{cus_no}
+	</select>
+	
+	<update id="updateCus" parameterType="com.naver.erp.CusDTO" >
+		update customer
+			set cus_name = #{cus_name}
+			,tel_num = #{tel_num}
+			,jumin_num = #{jumin_num}
+			
+			<if test="emp_no>0">
+			 ,emp_no = #{emp_no}
+			 </if>
+			
+		where cus_no=#{cus_no}
+	</update>
+	
+	<insert id="insertCusDel" parameterType="com.naver.erp.CusDTO">
+		insert into customer_deleted(
+			del_cus_no
+			, cus_no
+		)values( 
+			(select nvl(max(del_cus_no),0)+1 from customer_deleted)
+			, #{cus_no}
+		)
+	</insert>
+</mapper>

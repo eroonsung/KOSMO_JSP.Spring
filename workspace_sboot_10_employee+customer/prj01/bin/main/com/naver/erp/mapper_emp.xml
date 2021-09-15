@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.erp.EmpDAO">
+	<sql id="empWhere">
+    	<if test="keyword1!=null and keyword1.length()>0">
+   		and 
+   		(
+    	upper(emp_no) like upper('%${keyword1}%') 
+    	or upper(emp_name) like upper('%${keyword1}%') 
+    	or upper(jikup) like upper('%${keyword1}%') 
+    	or upper(dep_name) like upper('%${keyword1}%') 
+    	or to_char(hire_date,'YYYYMMDD') like '%${keyword1}%'
+    	or to_char(hire_date,'YYYY-MM-DD') like '%${keyword1}%'
+    	or to_char(hire_date,'YYYY.MM.DD') like '%${keyword1}%'
+    	or to_char(hire_date,'YYYY/MM/DD') like '%${keyword1}%'
+    	)
+    	</if>
+	    <if test="jikup!=null and jikup.size()>0">
+    		and
+    		<foreach collection="jikup" item="jikup" open="(" separator=" or " close=")">
+   				jikup = #{jikup}
+    		</foreach>
+    	</if>	
+    	<if test="min_year!=null and min_year.length()>0 and min_month!=null and min_month.length()>0 
+    				and max_year!=null and max_year.length()>0 and max_month!=null and max_month.length()>0">
+    		and (
+    			hire_date between to_date(#{min_year}||#{min_month},'YYYYMM')
+    						and to_date(#{max_year}||#{max_month},'YYYYMM')
+    		)			
+    	</if>
+    	<if test="dep_name!=null and dep_name.size()>0">
+    		and
+    		<foreach collection="dep_name" item="dep_name" open="(" separator=" or " close=")">
+   				dep_name = #{dep_name}
+    		</foreach>
+    	</if>
+
+	</sql>
+	
+
+	<select id="getEmpListAllCnt" parameterType="com.naver.erp.EmpSearchDTO" resultType="int">
+		select 
+			count(*) 
+		from 
+			employee e, dept d 
+		where
+	    	1=1  
+	    	and e.dep_no = d.dep_no
+	    	<include refid="empWhere"/>
+	</select>
+	
+	<select id="getEmpList" parameterType="com.naver.erp.EmpSearchDTO" resultType="java.util.HashMap">
+	
+		select * 
+		from (select rownum RNUM, zxcvb.*
+		        from (
+		        	select
+					e.emp_no||'' 						 "emp_no"
+				    , e.emp_name                        "emp_name"
+				    , e.jikup                         "jikup"
+				    , e.pic								"pic"
+				    , to_char(e.hire_date,'YYYY-MM-DD(DY)','nls_date_language=korean') "hire_date"
+				    , d.dep_name		 "dep_name"
+			    from 
+			    	employee e, dept d 
+			    where
+			    	1=1  
+			    	and e.dep_no = d.dep_no
+					<include refid="empWhere"/>
+								
+		        order by 
+		        	<if test="sortHeadName==null or sortHeadName.length()==0 
+		        				and sortAscDesc==null or sortAscDesc.length()==0">
+		        		e.emp_no
+		        	</if>
+		        	<if test="sortHeadName!=null and sortHeadName.length()>0 
+		        				and sortAscDesc!=null and sortAscDesc.length()>0">
+		        		<choose>
+		        			<when test="sortHeadName.equals('jikup')">
+		        				case ${sortHeadName}
+		        				when '사장' then 1
+		        				when '부장' then 2
+		        				when '과장' then 3
+		        				when '대리' then 4
+		        				when '주임' then 5
+		        				else 6 end
+		        			</when>
+		        			<otherwise>
+		        				${sortHeadName}
+		        			</otherwise>
+		        		</choose>
+		        		${sortAscDesc}
+		        	</if>
+		                )zxcvb
+		        <!-- 부등호를 태그의 시작으로 인식하기 때문에 <![CDATA[비교문 입력]]>을 사용함 -->
+		        <!-- CDATA: character data -->
+			        <![CDATA[
+			        where rownum <= ${selectPageNo * rowCntPerPage})
+			    	where RNUM >= ${((selectPageNo-1)*rowCntPerPage)+1}
+			        ]]>
+		        <!--  
+		        where rownum &lt;= 10)
+				where  RNUM &gt;= 1
+				-->
+	
+	</select>
+	
+	<select id="getEmp" parameterType="int" resultType="com.naver.erp.EmpDTO">
+		select
+            e.emp_no       		"emp_no"
+            , e.emp_name       "emp_name"
+            , e.pic				"pic"
+            , e.dep_no        "dep_no"
+            , e.jikup     "jikup"
+            , e.salary     	"salary"
+            , e.hire_date			"hire_date"
+            , e.jumin_num         "jumin_num"
+            , e.phone		"phone"          
+            , e.mgr_emp_no		"mgr_emp_no"       
+        from employee e, dept d     
+        where 
+        d.dep_no = e.dep_no
+        and emp_no=#{emp_no}
+	</select>
+	
+	<insert id="insertEmp" parameterType="com.naver.erp.EmpDTO">
+		insert into employee(
+			 emp_no
+			 , emp_name
+			 
+			 <if test="pic!=null and pic.length()>0">
+			 , pic 
+			 </if>
+			 
+			 , dep_no
+			 , jikup
+			 , salary
+			 , jumin_num
+			 , phone
+			 
+			 <if test="mgr_emp_no>0">
+			 , mgr_emp_no
+			 </if>
+		) values(
+			(select nvl(max(emp_no),0)+1 from employee)
+			 , #{emp_name} <!-- BoardDTO 객체의 subject 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			
+			 <if test="pic!=null and pic.length()>0">
+			 , #{pic}
+			 </if>
+			 
+			 , #{dep_no} <!-- BoardDTO 객S체의 writer 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{jikup}
+			 , #{salary} <!-- BoardDTO 객체의 content 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{jumin_num} <!-- BoardDTO 객체의 pwd 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 , #{phone} <!-- BoardDTO 객체의 email 속성변수 안의 값 삽입하기, 문자면 '를 앞뒤에 붙임 -->
+			 
+			 <if test="mgr_emp_no>0">
+			 , #{mgr_emp_no}
+			 </if>
+		)	
+	</insert>
+		
+	<update id="updateEmp" parameterType="com.naver.erp.EmpDTO" >
+		update employee
+			set emp_name = #{emp_name}
+			,dep_no = #{dep_no}
+			
+			<if test="is_del!=null and is_del.length()>0">
+			, pic = null
+			</if>
+			
+			<if test="is_del==null or is_del.length()==0">
+				<if test="pic!=null and pic.length()>0">
+			 	, pic = #{pic}
+				</if>
+			</if>
+			
+			,jikup = #{jikup}
+			,salary = #{salary}
+			,jumin_num = #{jumin_num}
+			,phone = #{phone}
+			
+			 <if test="mgr_emp_no>0">
+			 ,mgr_emp_no = #{mgr_emp_no}
+			 </if>
+		where emp_no=#{emp_no}
+	</update>
+	
+	<!-- foreign key를 null 값으로 처리한 후에 삭제 -->
+	<update id="updateMgrEmpNo">
+		update employee set mgr_emp_no=null
+		where mgr_emp_no=#{emp_no}
+	</update>
+	
+	<update id="updateCusEmpNo">
+		update customer set emp_no=null
+		where emp_no=#{emp_no}	
+	</update>
+	
+	<delete id="deleteEmp" parameterType="com.naver.erp.EmpDTO">
+		delete from employee
+		where emp_no=#{emp_no}
+	</delete>
+	
+	<select id="getEmpCnt" parameterType="com.naver.erp.EmpDTO" resultType="int">
+		select count(*) from employee where emp_no=#{emp_no}
+	</select>
+	
+	<select id="getJikupList" resultType="com.naver.erp.EmpDTO">
+		select unique jikup from employee
+		order by
+		   decode(jikup , '사장', 1 , '부장', 2 , '과장', 3 , '대리', 4,'주임' ,5,6) asc
+	</select>
+	<select id="getdepNameList" resultType="com.naver.erp.EmpDTO">
+		select dep_name from dept
+	</select>
+	
+	<select id="getMinY" resultType="int">
+		select min(to_number(to_char(hire_date,'YYYY'))) from employee 
+	</select>
+	
+	<select id="getMaxY" resultType="int">
+		select max(to_number(to_char(hire_date,'YYYY'))) from employee
+	</select>
+	
+	<select id="getDepNoAndNameList" resultType="hashmap">
+		select 
+			dep_no	"dep_no"
+			, dep_name "dep_name"
+		from dept
+	</select>
+	
+	<select id="getMgrEmpList" resultType="com.naver.erp.EmpDTO">
+		select 
+			e.emp_no "emp_no"
+			, e.emp_name "emp_name"
+			, d.dep_name "dep_name"
+			, e.jikup "jikup"
+		from 
+			employee e, dept d
+		where
+			e.dep_no = d.dep_no
+		order by
+			"emp_no"
+	</select>
+
+	<!-- ******************************************************* -->
+	<!-- 게시판 이름을 가져오는 select문을 내포한 select태그 선언 -->
+	<!-- ******************************************************* -->
+	<select id="getPic" parameterType="com.naver.erp.EmpDTO" resultType="String">
+		select pic from employee where emp_no=#{emp_no}
+	</select>
+</mapper>
