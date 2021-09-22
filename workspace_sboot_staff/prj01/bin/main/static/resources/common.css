@@ -1,0 +1,111 @@
+@charset "UTF-8";
+	
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* body 태그, form 태그, td 태그, th 태그 , pre 태그 관련 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+body,form,td,th,pre { 
+	font-size: 10pt;  
+	/*
+	font-weight:bolder;
+	font-weight:lighter;
+	font-weight:normal;   
+	font-weight:bold;  
+	*/ 
+	color: black; 
+	line-height: 160%; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+} 
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* input, select 태그 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+input,select { 
+	font-size: 10pt; 
+	color:black; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+	height: 20px; 
+} 
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* textarea 태그 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+textarea { 
+	font-size: 10pt; 
+	color:black; 
+	font-family: 굴림,tahoma,돋움,verdana; 
+} 
+
+a:link {text-decoration:none;color:#696969} 
+a:hover{text-decoration:none;color:#66ccff} 
+a:visited {text-decoration:none;color:#330066} 
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* <table class="tbcss0"> ~</table>안의 테이블에 가로,세로 선이 모두 없게 보이기. */
+/* 경계선 색상은 직접 table 태그에 직접 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+.tbcss0, .tbcss0 td, .tbcss0 th{ 
+	/*----------------------------------------------------------*/ 
+	border-collapse: collapse;              /* 경계선을 입체가 아닌 단일선으로 설정. */ 
+	/*----------------------------------------------------------*/ 
+	border-width:0px;                       /* 모든 경계선을 두께 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-size:10pt; 	                 /* 글자 크기 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-family: tahoma,굴림,돋움,verdana;  /* 글자체 설정. */ 
+	/*----------------------------------------------------------*/ 
+	padding-left:10px;                       /* 왼쪽 여백*/ 
+	padding-right:10px;                      /* 오른쪽 여백*/ 
+	/*----------------------------------------------------------*/ 
+	/*padding:5;*/
+ }
+ 
+ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* <table class="tbcss2"> ~</table>안의 가로선은 단일선으로 보이고 세로 선은 안 보이기. */
+/* 경계선 색상은 직접 table 테그에 직접 설정*/ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+.tbcss1, .tbcss1 td, .tbcss1 th{ 
+	/*----------------------------------------------------------*/ 
+	border-collapse: collapse;              /* 경계선을 입체가 아닌 단일선으로 설정. */ 
+	/*----------------------------------------------------------*/ 
+	border-top-width:1px;                       /* 위 경계선을 두께 설정. */ 
+	border-top-style:solid;                     /* 위 경계선을 모양 설정. */ 
+	border-bottom-width:1px;                    /* 아래 경계선을 모양 설정. */ 
+	border-bottom-style:solid;                  /* 아래 경계선을 모양 설정. */ 
+	/*----------------------------------------------------------*/ 
+	border-left-width:0px;                      /* 왼쪽 경계선을 모양 설정. */ 
+	border-right-width:0px;                     /* 오른쪽 경계선을 모양 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-size: 10pt;                    /* 글자 크기 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-family: tahoma,굴림,돋움,verdana;  /* 글자체 설정. */ 
+	/*----------------------------------------------------------*/ 
+	padding-left:10px;                       /* 왼쪽 여백*/ 
+	padding-right:10px;                      /* 오른쪽 여백*/ 
+	/*----------------------------------------------------------*/ 
+	 /*border-spacing:0;*/
+}
+
+ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+/* <table class="tbcss1"> ~</table>안의 테이블에 가로,세로 선이 모두 단일선으로 보이기. */
+/* 경계선 색상은 직접 table 태그에 직접 설정. */ 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/ 
+.tbcss2, .tbcss2 td, .tbcss2 th{ 
+	/*----------------------------------------------------------*/ 
+	border-collapse: collapse;              /* 경계선을 입체가 아닌 단일선으로 설정. */ 
+	/*----------------------------------------------------------*/ 
+	border-width:1px;                       /* 모든 경계선을 두께 설정. */ 
+	border-style:solid;                     /* 모든 경계선을 모양 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-size: 10pt;                        /* 글자 크기 설정. */ 
+	/*----------------------------------------------------------*/ 
+	font-family: tahoma,굴림,돋움,verdana;  /* 글자체 설정. */ 
+	/*----------------------------------------------------------*/ 
+	padding-left:10px;                       /* 왼쪽 여백*/ 
+	padding-right:10px;                      /* 오른쪽 여백*/ 
+	/*----------------------------------------------------------*/ 
+	 /*border-spacing:0;*/
+ }
